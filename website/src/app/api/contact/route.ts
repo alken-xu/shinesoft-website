@@ -180,6 +180,7 @@ export async function POST(req: NextRequest) {
     await transporter.sendMail({
       from: `"${fromName}" <${fromEmail}>`,
       to: process.env.CONTACT_TO_EMAIL,
+      replyTo: `"${body.name}" <${body.email}>`,
       subject: `【新規お問い合わせ】${getTypeLabel(body.type, body.locale)} - ${body.company}`,
       text: adminText,
     });
