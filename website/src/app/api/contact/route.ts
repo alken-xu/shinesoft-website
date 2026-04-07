@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import nodemailer from "nodemailer";
+import { Resend } from "resend";
 
 interface ContactBody {
   type: string;
@@ -138,11 +139,71 @@ https://shinesoft.co.jp/
   return templates[locale] || templates.ja;
 }
 
+// Resend経由で送信（本番環境）
+async function sendViaResend(
+  body: ContactBody,
+  autoReply: { subject: string; text: string },
+  adminText: string
+) {
+  const resend = new Resend(process.env.RESEND_API_KEY);
+  const fromEmail = process.env.RESEND_FROM || "onboarding@resend.dev";
+  const fromName = "株式会社シャインソフト";
+
+  await resend.emails.send({
+    from: `${fromName} <${fromEmail}>`,
+    to: [process.env.CONTACT_TO_EMAIL!],
+    replyTo: `${body.name} <${body.email}>`,
+    subject: `【新規お問い合わせ】${getTypeLabel(body.type, body.locale)} - ${body.company}`,
+    text: adminText,
+  });
+
+  await resend.emails.send({
+    from: `${fromName} <${fromEmail}>`,
+    to: [body.email],
+    subject: autoReply.subject,
+    text: autoReply.text,
+  });
+}
+
+// nodemailer経由で送信（ローカル開発用）
+async function sendViaSmtp(
+  body: ContactBody,
+  autoReply: { subject: string; text: string },
+  adminText: string
+) {
+  const transporter = nodemailer.createTransport({
+    host: process.env.SMTP_HOST,
+    port: Number(process.env.SMTP_PORT) || 587,
+    secure: process.env.SMTP_SECURE === "true",
+    auth: {
+      user: process.env.SMTP_USER,
+      pass: process.env.SMTP_PASS,
+    },
+  });
+
+  const fromName = "株式会社シャインソフト";
+  const fromEmail = process.env.SMTP_FROM || process.env.SMTP_USER || "noreply@shinesoft.co.jp";
+
+  await transporter.sendMail({
+    from: `"${fromName}" <${fromEmail}>`,
+    to: process.env.CONTACT_TO_EMAIL,
+    replyTo: `"${body.name}" <${body.email}>`,
+    subject: `【新規お問い合わせ】${getTypeLabel(body.type, body.locale)} - ${body.company}`,
+    text: adminText,
+  });
+
+  await transporter.sendMail({
+    from: `"${fromName}" <${fromEmail}>`,
+    to: body.email,
+    subject: autoReply.subject,
+    text: autoReply.text,
+  });
+}
+
 export async function POST(req: NextRequest) {
   try {
     const body: ContactBody = await req.json();
 
-    // Basic server-side validation
     if (!body.type || !body.company || !body.name || !body.email || !body.phone) {
       return NextResponse.json({ error: "Missing required fields" }, { status: 400 });
     }
@@ -155,43 +216,18 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "Invalid phone" }, { status: 400 });
     }
 
-    // If email is not configured, just return success (for development)
-    if (!process.env.SMTP_HOST || !process.env.CONTACT_TO_EMAIL) {
-      console.log("[Contact] Email not configured. Form data:", body);
-      return NextResponse.json({ ok: true });
-    }
-
-    const transporter = nodemailer.createTransport({
-      host: process.env.SMTP_HOST,
-      port: Number(process.env.SMTP_PORT) || 587,
-      secure: process.env.SMTP_SECURE === "true",
-      auth: {
-        user: process.env.SMTP_USER,
-        pass: process.env.SMTP_PASS,
-      },
-    });
-
     const autoReply = buildAutoReplyEmail(body);
     const adminText = buildAdminEmail(body);
-    const fromName = "株式会社シャインソフト";
-    const fromEmail = process.env.SMTP_FROM || process.env.SMTP_USER || "noreply@shinesoft.co.jp";
 
-    // Send admin notification
-    await transporter.sendMail({
-      from: `"${fromName}" <${fromEmail}>`,
-      to: process.env.CONTACT_TO_EMAIL,
-      replyTo: `"${body.name}" <${body.email}>`,
-      subject: `【新規お問い合わせ】${getTypeLabel(body.type, body.locale)} - ${body.company}`,
-      text: adminText,
-    });
-
-    // Send auto-reply to user
-    await transporter.sendMail({
-      from: `"${fromName}" <${fromEmail}>`,
-      to: body.email,
-      subject: autoReply.subject,
-      text: autoReply.text,
-    });
+    if (process.env.RESEND_API_KEY && process.env.CONTACT_TO_EMAIL) {
+      // 本番環境: Resend（HTTPS API）を使用
+      await sendViaResend(body, autoReply, adminText);
+    } else if (process.env.SMTP_HOST && process.env.CONTACT_TO_EMAIL) {
+      // ローカル開発: SMTP（nodemailer）を使用
+      await sendViaSmtp(body, autoReply, adminText);
+    } else {
+      console.log("[Contact] Email not configured. Form data:", body);
+    }
 
     return NextResponse.json({ ok: true });
   } catch (err) {
