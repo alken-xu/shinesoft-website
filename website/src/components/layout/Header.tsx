@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
-import { Menu, X, ChevronDown, Globe } from "lucide-react";
+import { Menu, X, ChevronDown, ChevronRight, Globe } from "lucide-react";
 import type { Locale } from "@/lib/dictionaries";
 
 interface HeaderProps {
@@ -118,7 +118,7 @@ export default function Header({ locale, dict }: HeaderProps) {
               </div>
             </div>
 
-            {/* Services dropdown */}
+            {/* Services dropdown (with nested infra flyout) */}
             <div className="relative group" {...makeHandlers(setServicesOpen, servicesTimer)}>
               <button
                 className="flex items-center gap-1 text-slate-300 hover:text-sky-400 px-3 py-2 text-sm font-medium transition-colors"
@@ -126,53 +126,58 @@ export default function Header({ locale, dict }: HeaderProps) {
                 {t.services} <ChevronDown size={14} />
               </button>
               <div
-                className={`absolute top-full left-0 mt-1 w-52 glass-card rounded-xl overflow-hidden transition-all duration-200 ${
+                className={`absolute top-full left-0 mt-1 w-52 glass-card rounded-xl overflow-visible transition-all duration-200 ${
                   servicesOpen
                     ? "opacity-100 translate-y-0 pointer-events-auto"
                     : "opacity-0 -translate-y-2 pointer-events-none"
                 }`}
               >
-                {[
-                  { href: "software", label: t.software },
-                  { href: "training", label: t.training },
-                  { href: "research", label: t.research },
-                ].map((item) => (
-                  <Link
-                    key={item.href}
-                    href={`${base}/services/${item.href}`}
-                    className="block px-4 py-3 text-sm text-slate-300 hover:text-sky-400 hover:bg-white/5 transition-colors"
-                  >
-                    {item.label}
-                  </Link>
-                ))}
-              </div>
-            </div>
-
-            {/* Infra dropdown */}
-            <div className="relative group" {...makeHandlers(setInfraOpen, infraTimer)}>
-              <button
-                className="flex items-center gap-1 text-slate-300 hover:text-sky-400 px-3 py-2 text-sm font-medium transition-colors"
-              >
-                {t.infra} <ChevronDown size={14} />
-              </button>
-              <div
-                className={`absolute top-full left-0 mt-1 w-48 glass-card rounded-xl overflow-hidden transition-all duration-200 ${
-                  infraOpen
-                    ? "opacity-100 translate-y-0 pointer-events-auto"
-                    : "opacity-0 -translate-y-2 pointer-events-none"
-                }`}
-              >
                 <Link
-                  href={`${base}/services/infrastructure`}
+                  href={`${base}/services/software`}
+                  className="block px-4 py-3 text-sm text-slate-300 hover:text-sky-400 hover:bg-white/5 transition-colors rounded-t-xl"
+                >
+                  {t.software}
+                </Link>
+
+                {/* Infra item with right flyout */}
+                <div className="relative" {...makeHandlers(setInfraOpen, infraTimer)}>
+                  <button className="flex items-center justify-between w-full px-4 py-3 text-sm text-slate-300 hover:text-sky-400 hover:bg-white/5 transition-colors">
+                    {t.infra}
+                    <ChevronRight size={14} />
+                  </button>
+                  <div
+                    className={`absolute left-full top-0 ml-1 w-48 glass-card rounded-xl overflow-hidden transition-all duration-200 ${
+                      infraOpen
+                        ? "opacity-100 translate-x-0 pointer-events-auto"
+                        : "opacity-0 -translate-x-2 pointer-events-none"
+                    }`}
+                  >
+                    <Link
+                      href={`${base}/services/infrastructure`}
+                      className="block px-4 py-3 text-sm text-slate-300 hover:text-sky-400 hover:bg-white/5 transition-colors"
+                    >
+                      {t.infrastructure}
+                    </Link>
+                    <Link
+                      href={`${base}/services/cloud`}
+                      className="block px-4 py-3 text-sm text-slate-300 hover:text-sky-400 hover:bg-white/5 transition-colors"
+                    >
+                      {t.cloud}
+                    </Link>
+                  </div>
+                </div>
+
+                <Link
+                  href={`${base}/services/training`}
                   className="block px-4 py-3 text-sm text-slate-300 hover:text-sky-400 hover:bg-white/5 transition-colors"
                 >
-                  {t.infrastructure}
+                  {t.training}
                 </Link>
                 <Link
-                  href={`${base}/services/cloud`}
-                  className="block px-4 py-3 text-sm text-slate-300 hover:text-sky-400 hover:bg-white/5 transition-colors"
+                  href={`${base}/services/research`}
+                  className="block px-4 py-3 text-sm text-slate-300 hover:text-sky-400 hover:bg-white/5 transition-colors rounded-b-xl"
                 >
-                  {t.cloud}
+                  {t.research}
                 </Link>
               </div>
             </div>
@@ -259,28 +264,22 @@ export default function Header({ locale, dict }: HeaderProps) {
               <p className="text-xs text-slate-500 font-medium px-3 pb-1 uppercase tracking-wider">
                 {t.services}
               </p>
-              {[
-                { href: "software", label: t.software },
-                { href: "training", label: t.training },
-                { href: "research", label: t.research },
-              ].map((item) => (
-                <Link key={item.href} href={`${base}/services/${item.href}`} className="block px-3 py-2 text-slate-300 hover:text-sky-400 text-sm" onClick={() => setIsOpen(false)}>
-                  {item.label}
-                </Link>
-              ))}
-            </div>
-            <div className="pt-2 pb-1">
-              <p className="text-xs text-slate-500 font-medium px-3 pb-1 uppercase tracking-wider">
-                {t.infra}
-              </p>
-              {[
-                { href: "infrastructure", label: t.infrastructure },
-                { href: "cloud", label: t.cloud },
-              ].map((item) => (
-                <Link key={item.href} href={`${base}/services/${item.href}`} className="block px-3 py-2 text-slate-300 hover:text-sky-400 text-sm" onClick={() => setIsOpen(false)}>
-                  {item.label}
-                </Link>
-              ))}
+              <Link href={`${base}/services/software`} className="block px-3 py-2 text-slate-300 hover:text-sky-400 text-sm" onClick={() => setIsOpen(false)}>
+                {t.software}
+              </Link>
+              <p className="text-xs text-slate-600 font-medium px-3 pt-2 pb-0.5">{t.infra}</p>
+              <Link href={`${base}/services/infrastructure`} className="block px-5 py-2 text-slate-300 hover:text-sky-400 text-sm" onClick={() => setIsOpen(false)}>
+                {t.infrastructure}
+              </Link>
+              <Link href={`${base}/services/cloud`} className="block px-5 py-2 text-slate-300 hover:text-sky-400 text-sm" onClick={() => setIsOpen(false)}>
+                {t.cloud}
+              </Link>
+              <Link href={`${base}/services/training`} className="block px-3 py-2 text-slate-300 hover:text-sky-400 text-sm" onClick={() => setIsOpen(false)}>
+                {t.training}
+              </Link>
+              <Link href={`${base}/services/research`} className="block px-3 py-2 text-slate-300 hover:text-sky-400 text-sm" onClick={() => setIsOpen(false)}>
+                {t.research}
+              </Link>
             </div>
             <Link href={`${base}/news`} className="block px-3 py-2 text-slate-300 hover:text-sky-400 text-sm" onClick={() => setIsOpen(false)}>
               {t.news}
