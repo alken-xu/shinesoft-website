@@ -161,9 +161,7 @@ export async function POST(req: NextRequest) {
     }
 
     const smtpOptions = {
-      host: "smtp.gmail.com",
-      port: 587,
-      secure: false,
+      service: "gmail",
       family: 4, // IPv4強制（RenderのIPv6非対応環境対策）
       auth: {
         user: process.env.SMTP_USER,
