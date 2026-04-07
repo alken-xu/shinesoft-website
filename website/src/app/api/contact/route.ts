@@ -160,15 +160,13 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ ok: true });
     }
 
-    const smtpOptions = {
+    const transporter = nodemailer.createTransport({
       service: "gmail",
-      family: 4, // IPv4強制（RenderのIPv6非対応環境対策）
       auth: {
         user: process.env.SMTP_USER,
         pass: process.env.SMTP_PASS,
       },
-    } as SMTPTransport.Options;
-    const transporter = nodemailer.createTransport(smtpOptions);
+    } as SMTPTransport.Options);
 
     const autoReply = buildAutoReplyEmail(body);
     const adminText = buildAdminEmail(body);

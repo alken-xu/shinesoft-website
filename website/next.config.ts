@@ -2,6 +2,7 @@ import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
   output: "standalone",
+  serverExternalPackages: ["nodemailer"],
   async redirects() {
     return [
       { source: "/feature", destination: "/about/feature", permanent: true },
