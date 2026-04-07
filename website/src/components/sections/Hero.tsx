@@ -2,7 +2,7 @@
 
 import { useEffect, useRef } from "react";
 import Link from "next/link";
-import { ArrowRight, ChevronDown } from "lucide-react";
+import { ArrowRight } from "lucide-react";
 
 interface HeroProps {
   locale: string;
@@ -112,13 +112,6 @@ export default function Hero({ locale, dict }: HeroProps) {
 
       {/* Content */}
       <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-        <div className="inline-flex items-center gap-2 bg-sky-500/10 border border-sky-500/20 rounded-full px-4 py-1.5 mb-8">
-          <div className="w-1.5 h-1.5 rounded-full bg-sky-400 animate-pulse" />
-          <span className="text-sky-400 text-xs font-medium tracking-wider uppercase">
-            Innovation from Imagination
-          </span>
-        </div>
-
         <h1 className="text-5xl sm:text-6xl lg:text-7xl xl:text-8xl font-black leading-tight mb-6">
           <span className="block text-white">{t.catch1}</span>
           <span className="block gradient-text">{t.catch2}</span>
@@ -145,11 +138,7 @@ export default function Hero({ locale, dict }: HeroProps) {
         </div>
       </div>
 
-      {/* Scroll indicator */}
-      <div className="absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 text-slate-500">
-        <span className="text-xs tracking-widest uppercase">Scroll</span>
-        <ChevronDown size={16} className="animate-bounce" />
-      </div>
+
     </section>
   );
 }
