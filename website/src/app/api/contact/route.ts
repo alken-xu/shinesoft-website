@@ -154,15 +154,13 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "Invalid phone" }, { status: 400 });
     }
 
-    if (!process.env.SMTP_HOST || !process.env.CONTACT_TO_EMAIL) {
+    if (!process.env.SMTP_USER || !process.env.CONTACT_TO_EMAIL) {
       console.log("[Contact] Email not configured. Form data:", body);
       return NextResponse.json({ ok: true });
     }
 
     const transporter = nodemailer.createTransport({
-      host: process.env.SMTP_HOST,
-      port: Number(process.env.SMTP_PORT) || 587,
-      secure: process.env.SMTP_SECURE === "true",
+      service: "gmail",
       auth: {
         user: process.env.SMTP_USER,
         pass: process.env.SMTP_PASS,
