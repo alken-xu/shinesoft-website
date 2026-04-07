@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import { Menu, X, ChevronDown, Globe } from "lucide-react";
 import type { Locale } from "@/lib/dictionaries";
@@ -38,6 +38,23 @@ export default function Header({ locale, dict }: HeaderProps) {
   const [aboutOpen, setAboutOpen] = useState(false);
   const [langOpen, setLangOpen] = useState(false);
 
+  const aboutTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const servicesTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const langTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  const makeHandlers = (
+    setter: (v: boolean) => void,
+    timer: React.MutableRefObject<ReturnType<typeof setTimeout> | null>
+  ) => ({
+    onMouseEnter: () => {
+      if (timer.current) clearTimeout(timer.current);
+      setter(true);
+    },
+    onMouseLeave: () => {
+      timer.current = setTimeout(() => setter(false), 150);
+    },
+  });
+
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 20);
     window.addEventListener("scroll", onScroll);
@@ -70,11 +87,9 @@ export default function Header({ locale, dict }: HeaderProps) {
           {/* Desktop Navigation */}
           <nav className="hidden lg:flex items-center gap-1">
             {/* About dropdown */}
-            <div className="relative group">
+            <div className="relative group" {...makeHandlers(setAboutOpen, aboutTimer)}>
               <button
                 className="flex items-center gap-1 text-slate-300 hover:text-sky-400 px-3 py-2 text-sm font-medium transition-colors"
-                onMouseEnter={() => setAboutOpen(true)}
-                onMouseLeave={() => setAboutOpen(false)}
               >
                 {t.about} <ChevronDown size={14} />
               </button>
@@ -84,8 +99,6 @@ export default function Header({ locale, dict }: HeaderProps) {
                     ? "opacity-100 translate-y-0 pointer-events-auto"
                     : "opacity-0 -translate-y-2 pointer-events-none"
                 }`}
-                onMouseEnter={() => setAboutOpen(true)}
-                onMouseLeave={() => setAboutOpen(false)}
               >
                 <Link
                   href={`${base}/about/corporate`}
@@ -103,11 +116,9 @@ export default function Header({ locale, dict }: HeaderProps) {
             </div>
 
             {/* Services dropdown */}
-            <div className="relative group">
+            <div className="relative group" {...makeHandlers(setServicesOpen, servicesTimer)}>
               <button
                 className="flex items-center gap-1 text-slate-300 hover:text-sky-400 px-3 py-2 text-sm font-medium transition-colors"
-                onMouseEnter={() => setServicesOpen(true)}
-                onMouseLeave={() => setServicesOpen(false)}
               >
                 {t.services} <ChevronDown size={14} />
               </button>
@@ -117,8 +128,6 @@ export default function Header({ locale, dict }: HeaderProps) {
                     ? "opacity-100 translate-y-0 pointer-events-auto"
                     : "opacity-0 -translate-y-2 pointer-events-none"
                 }`}
-                onMouseEnter={() => setServicesOpen(true)}
-                onMouseLeave={() => setServicesOpen(false)}
               >
                 {[
                   { href: "software", label: t.software },
@@ -152,11 +161,9 @@ export default function Header({ locale, dict }: HeaderProps) {
             </Link>
 
             {/* Language switcher */}
-            <div className="relative ml-2">
+            <div className="relative ml-2" {...makeHandlers(setLangOpen, langTimer)}>
               <button
                 className="flex items-center gap-1 text-slate-300 hover:text-sky-400 px-2 py-2 text-sm transition-colors"
-                onMouseEnter={() => setLangOpen(true)}
-                onMouseLeave={() => setLangOpen(false)}
               >
                 <Globe size={16} />
                 <span className="uppercase text-xs font-medium">{locale}</span>
@@ -167,8 +174,6 @@ export default function Header({ locale, dict }: HeaderProps) {
                     ? "opacity-100 translate-y-0 pointer-events-auto"
                     : "opacity-0 -translate-y-2 pointer-events-none"
                 }`}
-                onMouseEnter={() => setLangOpen(true)}
-                onMouseLeave={() => setLangOpen(false)}
               >
                 {languages.map((lang) => (
                   <a
