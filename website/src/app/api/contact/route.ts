@@ -160,7 +160,10 @@ export async function POST(req: NextRequest) {
     }
 
     const transporter = nodemailer.createTransport({
-      service: "gmail",
+      host: "smtp.gmail.com",
+      port: 587,
+      secure: false,
+      family: 4, // IPv4強制（RenderのIPv6非対応環境対策）
       auth: {
         user: process.env.SMTP_USER,
         pass: process.env.SMTP_PASS,
