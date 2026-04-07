@@ -37,7 +37,7 @@ npm run lint     # ESLint
 ### i18n（多言語）
 
 - URLパターン: `/{locale}/...`（`ja`・`en`・`zh`）
-- `src/proxy.ts` でブラウザ言語を検出し `/ja` などへリダイレクト
+- `src/proxy.ts` でロケール未指定時は常に `/ja` へリダイレクト（ブラウザ言語自動検出は無効化済み）
 - 翻訳文字列: `src/messages/{ja,en,zh}.json`
 - 辞書ヘルパー: `src/lib/dictionaries.ts`（`getDictionary(locale)`）
 - レイアウト: `src/app/[locale]/layout.tsx` が各ページに辞書を渡す
@@ -54,6 +54,7 @@ npm run lint     # ESLint
 - APIルート: `src/app/api/contact/route.ts`（POST）
 - メール送信: `nodemailer` + SMTP。`.env.local.example` 参照
 - メール未設定時はコンソールログのみ（開発時に便利）
+- 社内通知メールに `replyTo: body.email` を設定済み（担当者が返信すると問い合わせユーザー宛に届く）
 
 ### Next.js 16 の注意点
 
@@ -112,5 +113,11 @@ website/
 
 ## デプロイ
 
-Vercel への接続: `website/` ディレクトリをルートとして設定する。  
-環境変数: `.env.local.example` の値を Vercel のEnvironment Variablesに設定する。
+**Render** へデプロイ済み（GitHub リポジトリ: `alken-xu/shinesoft-website`）。
+
+- ルートディレクトリ: `website/`
+- ビルドコマンド: `npm install && npm run build`
+- 環境変数: `.env.local.example` の値を Render の Environment Variables に設定する
+
+**注意:** Render は `NODE_ENV=production` でビルドするため `devDependencies` がスキップされる。  
+`@tailwindcss/postcss`・`tailwindcss`・`typescript`・`@types/*` 等のビルド必須パッケージは `dependencies` に配置すること。

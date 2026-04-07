@@ -88,8 +88,8 @@
 | スタイリング | Tailwind CSS + Framer Motion | 高品質アニメーション・カスタムデザイン |
 | CMS | Contentful / Sanity / Notion API | Markdown編集・多言語対応・API提供 |
 | メール送信 | Resend / SendGrid / Nodemailer | 問い合わせフォームの自動送信 |
-| ホスティング | Vercel / AWS Amplify | Next.js最適化・CDN・自動デプロイ |
-| 言語検出 | next-intl / next-i18next | URL別言語ルーティング |
+| ホスティング | Render | GitHub連携・自動デプロイ（`alken-xu/shinesoft-website`） |
+| 言語ルーティング | Next.js 組み込み i18n | URLベースのロケール切替（デフォルト: ja） |
 
 > **代替案：** CMSをWordPress（headless）とし、REST APIまたはGraphQLでフロントエンドと連携する構成も選択可能。
 
@@ -124,7 +124,7 @@
 |---|------|------|
 | F-12 | 言語切替UI | ヘッダーに言語セレクター設置（JA / EN / ZH） |
 | F-13 | URLルーティング | `/` (JA) / `/en/` (EN) / `/zh/` (ZH) |
-| F-14 | 言語自動検出 | ブラウザのAccept-Languageヘッダーで初期言語を判定 |
+| F-14 | デフォルト言語 | **日本語固定**。ロケール未指定時は常に `/ja` へリダイレクト（ブラウザ言語自動検出は無効化） |
 | F-15 | SEOメタ対応 | hreflang属性を全ページに設定 |
 
 ### 4.4 その他機能
@@ -163,10 +163,11 @@
 ### 5.3 ページ別デザイン要点
 
 **トップページ (/):**
-- フルスクリーンヒーロービジュアル（映像 or グラデーションアニメーション）
+- フルスクリーンヒーロービジュアル（パーティクルアニメーション背景）
 - キャッチコピー：「技術革新、自己変革を加速させる。」
 - ミッション・ビジョン・サービス・ニュース・採用誘導セクション
 - カウンターアニメーション（社員数・プロジェクト実績数など）
+- ※「Innovation from Imagination」バッジおよびスクロールインジケーターは削除済み
 
 **各サービスページ:**
 - ページ遷移アニメーション
@@ -366,8 +367,8 @@ shinesoft.co.jp/
 │
 ├── /services/ (サービス)
 │   ├── /services/software (ソフトウェア開発)
-│   ├── /services/infrastructure (基盤サービス)
-│   ├── /services/cloud (クラウドサービス)
+│   ├── /services/infrastructure (基盤サービス)  ┐ ナビでは「インフラ」サブメニュー
+│   ├── /services/cloud (クラウドサービス)        ┘ （サービスドロップダウン内フライアウト）
 │   ├── /services/training (ITトレーニング)
 │   └── /services/research (研究)
 │
@@ -852,9 +853,9 @@ CMS:            Sanity または microCMS
 画像最適化:      Next/Image (WebP自動変換)
 アイコン:        Lucide React
 アニメーション:  Framer Motion + GSAP
-ホスティング:    Vercel
+ホスティング:    Render（GitHub: alken-xu/shinesoft-website）
 ドメイン:        shinesoft.co.jp（既存）
-SSL:            Vercel自動発行 または Let's Encrypt
+SSL:            Render自動発行
 解析:           Google Analytics 4
 ```
 ---
