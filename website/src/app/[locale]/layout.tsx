@@ -55,48 +55,10 @@ export default async function LocaleLayout({
   const dict = await getDictionary(locale as Locale);
 
   return (
-    <html lang={locale} className="h-full">
-      <head>
-        <link rel="preconnect" href="https://fonts.googleapis.com" />
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
-        <link
-          href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;600;700&display=swap"
-          rel="stylesheet"
-        />
-        <link rel="alternate" hrefLang="ja" href="/ja" />
-        <link rel="alternate" hrefLang="en" href="/en" />
-        <link rel="alternate" hrefLang="zh" href="/zh" />
-        <link rel="alternate" hrefLang="x-default" href="/ja" />
-        <script
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{
-            __html: JSON.stringify({
-              "@context": "https://schema.org",
-              "@type": "Organization",
-              name: "株式会社シャインソフト",
-              alternateName: "SHINESOFT CORPORATION",
-              url: "https://shinesoft.co.jp",
-              logo: "https://shinesoft.co.jp/logo.png",
-              foundingDate: "2006-06-01",
-              address: {
-                "@type": "PostalAddress",
-                streetAddress: "西新橋1-24-16 平和ビル8F",
-                addressLocality: "港区",
-                addressRegion: "東京都",
-                postalCode: "105-0003",
-                addressCountry: "JP",
-              },
-              telephone: "+81-3-6721-5778",
-              sameAs: [],
-            }),
-          }}
-        />
-      </head>
-      <body className="min-h-full flex flex-col bg-[#0f172a] text-slate-100">
-        <Header locale={locale as Locale} dict={dict} />
-        <main className="flex-1">{children}</main>
-        <Footer locale={locale as Locale} dict={dict} />
-      </body>
-    </html>
+    <>
+      <Header locale={locale as Locale} dict={dict} />
+      <main className="flex-1">{children}</main>
+      <Footer locale={locale as Locale} dict={dict} />
+    </>
   );
 }
