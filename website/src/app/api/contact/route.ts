@@ -160,7 +160,7 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ ok: true });
     }
 
-    const smtpOptions: SMTPTransport.Options = {
+    const smtpOptions = {
       host: "smtp.gmail.com",
       port: 587,
       secure: false,
@@ -169,7 +169,7 @@ export async function POST(req: NextRequest) {
         user: process.env.SMTP_USER,
         pass: process.env.SMTP_PASS,
       },
-    };
+    } as SMTPTransport.Options;
     const transporter = nodemailer.createTransport(smtpOptions);
 
     const autoReply = buildAutoReplyEmail(body);
