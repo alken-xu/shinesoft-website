@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import nodemailer from "nodemailer";
+import type SMTPTransport from "nodemailer/lib/smtp-transport";
 
 interface ContactBody {
   type: string;
@@ -159,7 +160,7 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ ok: true });
     }
 
-    const transporter = nodemailer.createTransport({
+    const smtpOptions: SMTPTransport.Options = {
       host: "smtp.gmail.com",
       port: 587,
       secure: false,
@@ -168,7 +169,8 @@ export async function POST(req: NextRequest) {
         user: process.env.SMTP_USER,
         pass: process.env.SMTP_PASS,
       },
-    });
+    };
+    const transporter = nodemailer.createTransport(smtpOptions);
 
     const autoReply = buildAutoReplyEmail(body);
     const adminText = buildAdminEmail(body);
