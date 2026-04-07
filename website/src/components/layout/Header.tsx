@@ -14,6 +14,7 @@ interface HeaderProps {
       feature: string;
       services: string;
       software: string;
+      infra: string;
       infrastructure: string;
       cloud: string;
       training: string;
@@ -36,10 +37,12 @@ export default function Header({ locale, dict }: HeaderProps) {
   const [scrolled, setScrolled] = useState(false);
   const [servicesOpen, setServicesOpen] = useState(false);
   const [aboutOpen, setAboutOpen] = useState(false);
+  const [infraOpen, setInfraOpen] = useState(false);
   const [langOpen, setLangOpen] = useState(false);
 
   const aboutTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const servicesTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const infraTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const langTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const makeHandlers = (
@@ -131,8 +134,6 @@ export default function Header({ locale, dict }: HeaderProps) {
               >
                 {[
                   { href: "software", label: t.software },
-                  { href: "infrastructure", label: t.infrastructure },
-                  { href: "cloud", label: t.cloud },
                   { href: "training", label: t.training },
                   { href: "research", label: t.research },
                 ].map((item) => (
@@ -144,6 +145,35 @@ export default function Header({ locale, dict }: HeaderProps) {
                     {item.label}
                   </Link>
                 ))}
+              </div>
+            </div>
+
+            {/* Infra dropdown */}
+            <div className="relative group" {...makeHandlers(setInfraOpen, infraTimer)}>
+              <button
+                className="flex items-center gap-1 text-slate-300 hover:text-sky-400 px-3 py-2 text-sm font-medium transition-colors"
+              >
+                {t.infra} <ChevronDown size={14} />
+              </button>
+              <div
+                className={`absolute top-full left-0 mt-1 w-48 glass-card rounded-xl overflow-hidden transition-all duration-200 ${
+                  infraOpen
+                    ? "opacity-100 translate-y-0 pointer-events-auto"
+                    : "opacity-0 -translate-y-2 pointer-events-none"
+                }`}
+              >
+                <Link
+                  href={`${base}/services/infrastructure`}
+                  className="block px-4 py-3 text-sm text-slate-300 hover:text-sky-400 hover:bg-white/5 transition-colors"
+                >
+                  {t.infrastructure}
+                </Link>
+                <Link
+                  href={`${base}/services/cloud`}
+                  className="block px-4 py-3 text-sm text-slate-300 hover:text-sky-400 hover:bg-white/5 transition-colors"
+                >
+                  {t.cloud}
+                </Link>
               </div>
             </div>
 
@@ -231,10 +261,21 @@ export default function Header({ locale, dict }: HeaderProps) {
               </p>
               {[
                 { href: "software", label: t.software },
-                { href: "infrastructure", label: t.infrastructure },
-                { href: "cloud", label: t.cloud },
                 { href: "training", label: t.training },
                 { href: "research", label: t.research },
+              ].map((item) => (
+                <Link key={item.href} href={`${base}/services/${item.href}`} className="block px-3 py-2 text-slate-300 hover:text-sky-400 text-sm" onClick={() => setIsOpen(false)}>
+                  {item.label}
+                </Link>
+              ))}
+            </div>
+            <div className="pt-2 pb-1">
+              <p className="text-xs text-slate-500 font-medium px-3 pb-1 uppercase tracking-wider">
+                {t.infra}
+              </p>
+              {[
+                { href: "infrastructure", label: t.infrastructure },
+                { href: "cloud", label: t.cloud },
               ].map((item) => (
                 <Link key={item.href} href={`${base}/services/${item.href}`} className="block px-3 py-2 text-slate-300 hover:text-sky-400 text-sm" onClick={() => setIsOpen(false)}>
                   {item.label}
