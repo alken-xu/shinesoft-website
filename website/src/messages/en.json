@@ -1,0 +1,99 @@
+{
+  "nav": {
+    "about": "About",
+    "corporate": "Company Profile",
+    "feature": "Our Strengths",
+    "services": "Services",
+    "software": "Software Development",
+    "infrastructure": "Infrastructure",
+    "cloud": "Cloud Services",
+    "training": "IT Training",
+    "research": "Research",
+    "news": "News",
+    "recruit": "Careers",
+    "contact": "Contact"
+  },
+  "footer": {
+    "address": "Heiwa Bldg. 8F, 1-24-16 Nishi-Shimbashi, Minato-ku, Tokyo 105-0003",
+    "tel": "TEL: 03-6721-5778",
+    "copyright": "© SHINESOFT CORPORATION. All rights reserved.",
+    "privacy": "Privacy Policy",
+    "sitemap": "Sitemap"
+  },
+  "home": {
+    "hero": {
+      "catch1": "Accelerating Innovation.",
+      "catch2": "Transforming Possibilities.",
+      "sub": "Discovering unknown potential and shaping new ideas into reality.",
+      "cta": "Our Services",
+      "contact": "Contact Us"
+    },
+    "mission": {
+      "label": "MISSION",
+      "title": "Contributing to Society through Cutting-Edge IT",
+      "body": "We absorb and research world-class advanced technologies and contribute to society by returning them to Japanese companies and institutions."
+    },
+    "vision": {
+      "label": "VISION",
+      "title": "Innovation from Imagination",
+      "body": "Leveraging imagination and creativity to challenge unknown technologies, realizing innovation that contributes to company growth and social progress."
+    },
+    "stats": {
+      "founded": "Founded",
+      "foundedYear": "2006",
+      "employees": "Employees",
+      "employeesCount": "103",
+      "employeesUnit": "",
+      "kcsp": "KCSP Certified",
+      "ktp": "KTP Certified"
+    },
+    "services": {
+      "title": "Services",
+      "viewAll": "Learn More"
+    },
+    "news": {
+      "title": "News",
+      "viewAll": "View All"
+    },
+    "recruit": {
+      "title": "Careers",
+      "body": "Join us in building the future at SHINESOFT. We welcome talented individuals of all nationalities.",
+      "cta": "View Openings"
+    }
+  },
+  "contact": {
+    "title": "Contact Us",
+    "subtitle": "Feel free to reach out to us",
+    "type": "Inquiry Type",
+    "types": {
+      "ses": "SES",
+      "software": "Software Development",
+      "dispatch": "Staff Dispatch",
+      "recruit": "Recruitment",
+      "other": "Other"
+    },
+    "company": "Company Name",
+    "name": "Full Name",
+    "email": "Email Address",
+    "phone": "Phone Number (no hyphens)",
+    "remarks": "Additional Notes",
+    "privacy": "I agree to the Privacy Policy",
+    "submit": "Send",
+    "required": "Required",
+    "success": "Your inquiry has been received. We will contact you shortly.",
+    "error": "Failed to send. Please try again later.",
+    "validation": {
+      "type": "Please select an inquiry type",
+      "company": "Please enter your company name",
+      "name": "Please enter your name",
+      "email": "Please enter a valid email address",
+      "phone": "Please enter your phone number (numbers only)",
+      "privacy": "You must agree to the Privacy Policy"
+    }
+  },
+  "common": {
+    "readMore": "Learn More",
+    "backToList": "Back to List",
+    "loading": "Loading..."
+  }
+}

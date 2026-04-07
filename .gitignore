@@ -1,0 +1,42 @@
+# Node dependencies
+website/node_modules/
+website/.pnp
+website/.pnp.*
+website/.yarn/*
+!website/.yarn/patches
+!website/.yarn/plugins
+!website/.yarn/releases
+!website/.yarn/versions
+
+# Next.js build output
+website/.next/
+website/out/
+website/build/
+
+# Environment variables (never commit secrets)
+website/.env
+website/.env.local
+website/.env.*.local
+# Allow example file
+!website/.env.local.example
+
+# Misc
+.DS_Store
+*.pem
+website/npm-debug.log*
+website/yarn-debug.log*
+website/yarn-error.log*
+website/.pnpm-debug.log*
+website/*.tsbuildinfo
+website/next-env.d.ts
+
+# Vercel
+website/.vercel
+
+# Editor
+.vscode/
+.idea/
+*.swp
+
+# Claude memory (local only)
+.claude/

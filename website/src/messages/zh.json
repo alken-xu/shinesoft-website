@@ -1,0 +1,99 @@
+{
+  "nav": {
+    "about": "公司介绍",
+    "corporate": "公司概况",
+    "feature": "我们的优势",
+    "services": "服务",
+    "software": "软件开发",
+    "infrastructure": "基础架构服务",
+    "cloud": "云服务",
+    "training": "IT培训",
+    "research": "研究",
+    "news": "新闻",
+    "recruit": "招聘信息",
+    "contact": "联系我们"
+  },
+  "footer": {
+    "address": "〒105-0003 东京都港区西新桥1-24-16 平和大楼8F",
+    "tel": "TEL: 03-6721-5778",
+    "copyright": "© SHINESOFT CORPORATION. 保留所有权利。",
+    "privacy": "隐私政策",
+    "sitemap": "网站地图"
+  },
+  "home": {
+    "hero": {
+      "catch1": "加速技术革新，",
+      "catch2": "推动自我变革。",
+      "sub": "发现未知的可能性，将新创意付诸实践。",
+      "cta": "了解服务",
+      "contact": "联系我们"
+    },
+    "mission": {
+      "label": "使命",
+      "title": "以最前沿的IT技术，贡献社会",
+      "body": "吸收研究世界级先进技术，还原于日本企业和机构，以此实现社会贡献。"
+    },
+    "vision": {
+      "label": "愿景",
+      "title": "Innovation from Imagination",
+      "body": "发挥想象力与创造力，挑战未知技术，实现促进公司发展与社会进步的革新。"
+    },
+    "stats": {
+      "founded": "成立",
+      "foundedYear": "2006",
+      "employees": "员工人数",
+      "employeesCount": "103",
+      "employeesUnit": "名",
+      "kcsp": "KCSP认证",
+      "ktp": "KTP认证"
+    },
+    "services": {
+      "title": "服务",
+      "viewAll": "了解详情"
+    },
+    "news": {
+      "title": "新闻",
+      "viewAll": "查看全部"
+    },
+    "recruit": {
+      "title": "招聘信息",
+      "body": "加入SHINESOFT，共创未来。我们欢迎各国优秀人才。",
+      "cta": "查看招聘信息"
+    }
+  },
+  "contact": {
+    "title": "联系我们",
+    "subtitle": "请随时与我们联系",
+    "type": "咨询类型",
+    "types": {
+      "ses": "SES",
+      "software": "软件外包开发",
+      "dispatch": "劳务派遣",
+      "recruit": "招聘",
+      "other": "其他"
+    },
+    "company": "公司名称",
+    "name": "姓名",
+    "email": "电子邮件地址",
+    "phone": "电话号码（无连字符）",
+    "remarks": "备注",
+    "privacy": "同意隐私政策",
+    "submit": "发送",
+    "required": "必填",
+    "success": "我们已收到您的咨询，相关负责人将尽快与您联系。",
+    "error": "发送失败，请稍后再试。",
+    "validation": {
+      "type": "请选择咨询类型",
+      "company": "请输入公司名称",
+      "name": "请输入姓名",
+      "email": "请输入有效的电子邮件地址",
+      "phone": "请输入电话号码（仅限数字）",
+      "privacy": "需要同意隐私政策"
+    }
+  },
+  "common": {
+    "readMore": "了解详情",
+    "backToList": "返回列表",
+    "loading": "加载中..."
+  }
+}

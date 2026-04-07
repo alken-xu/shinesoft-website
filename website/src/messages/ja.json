@@ -1,0 +1,99 @@
+{
+  "nav": {
+    "about": "会社紹介",
+    "corporate": "会社概要",
+    "feature": "シャインソフトの強み",
+    "services": "サービス",
+    "software": "ソフトウェア開発",
+    "infrastructure": "基盤サービス",
+    "cloud": "クラウドサービス",
+    "training": "ITトレーニング",
+    "research": "研究",
+    "news": "ニュース",
+    "recruit": "採用情報",
+    "contact": "お問い合わせ"
+  },
+  "footer": {
+    "address": "〒105-0003 東京都港区西新橋1-24-16 平和ビル8F",
+    "tel": "TEL: 03-6721-5778",
+    "copyright": "© SHINESOFT CORPORATION. All rights reserved.",
+    "privacy": "プライバシーポリシー",
+    "sitemap": "サイトマップ"
+  },
+  "home": {
+    "hero": {
+      "catch1": "技術革新、自己変革を",
+      "catch2": "加速させる。",
+      "sub": "未知の可能性を見つけ、新しいアイデアをカタチづくる。",
+      "cta": "サービスを見る",
+      "contact": "お問い合わせ"
+    },
+    "mission": {
+      "label": "MISSION",
+      "title": "最先端のIT技術で、社会に貢献する",
+      "body": "世界基準の先端技術を吸収・研究し、日本の企業や機関に還元することで社会貢献を目指す。"
+    },
+    "vision": {
+      "label": "VISION",
+      "title": "Innovation from Imagination",
+      "body": "想像力・創造力を活かし、未知の技術にチャレンジし、会社成長と社会進歩に貢献する革新を実現する。"
+    },
+    "stats": {
+      "founded": "設立",
+      "foundedYear": "2006",
+      "employees": "社員数",
+      "employeesCount": "103",
+      "employeesUnit": "名",
+      "kcsp": "KCSP認定",
+      "ktp": "KTP認定"
+    },
+    "services": {
+      "title": "サービス",
+      "viewAll": "詳しく見る"
+    },
+    "news": {
+      "title": "ニュース",
+      "viewAll": "すべて見る"
+    },
+    "recruit": {
+      "title": "採用情報",
+      "body": "シャインソフトで一緒に未来を創りませんか。国籍を問わず優秀な人材を募集しています。",
+      "cta": "採用情報を見る"
+    }
+  },
+  "contact": {
+    "title": "お問い合わせ",
+    "subtitle": "お気軽にご連絡ください",
+    "type": "お問い合わせ内容",
+    "types": {
+      "ses": "SES",
+      "software": "ソフトウェア受託開発",
+      "dispatch": "労働者派遣",
+      "recruit": "リクルート",
+      "other": "その他"
+    },
+    "company": "会社名",
+    "name": "氏名",
+    "email": "メールアドレス",
+    "phone": "電話番号（ハイフンなし）",
+    "remarks": "備考",
+    "privacy": "プライバシーポリシーに同意する",
+    "submit": "送信する",
+    "required": "必須",
+    "success": "お問い合わせを受け付けました。担当者よりご連絡いたします。",
+    "error": "送信に失敗しました。時間をおいてお試しください。",
+    "validation": {
+      "type": "お問い合わせ内容を選択してください",
+      "company": "会社名を入力してください",
+      "name": "氏名を入力してください",
+      "email": "有効なメールアドレスを入力してください",
+      "phone": "電話番号を入力してください（数字のみ）",
+      "privacy": "プライバシーポリシーへの同意が必要です"
+    }
+  },
+  "common": {
+    "readMore": "詳しく見る",
+    "backToList": "一覧に戻る",
+    "loading": "読み込み中..."
+  }
+}
