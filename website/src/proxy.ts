@@ -5,11 +5,8 @@ const locales = ["ja", "en", "zh"] as const;
 export type Locale = (typeof locales)[number];
 export const defaultLocale: Locale = "ja";
 
-function getLocale(request: NextRequest): Locale {
-  const acceptLanguage = request.headers.get("accept-language") || "";
-  if (acceptLanguage.includes("zh")) return "zh";
-  if (acceptLanguage.includes("en")) return "en";
-  return "ja";
+function getLocale(_request: NextRequest): Locale {
+  return defaultLocale;
 }
 
 export function proxy(request: NextRequest) {
