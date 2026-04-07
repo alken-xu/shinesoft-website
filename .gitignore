@@ -40,3 +40,7 @@ website/.vercel
 
 # Claude memory (local only)
 .claude/
+
+# Playwright MCP temp files
+.playwright-mcp/
+website/.playwright-mcp/
