@@ -1,6 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
 import nodemailer from "nodemailer";
-import { Resend } from "resend";
 
 interface ContactBody {
   type: string;
@@ -16,7 +15,7 @@ interface ContactBody {
 const typeLabels: Record<string, Record<string, string>> = {
   ses: { ja: "SES", en: "SES", zh: "SES" },
   software: { ja: "ソフトウェア受託開発", en: "Software Development", zh: "软件外包开发" },
-  dispatch: { ja: "労働者派遣", en: "Staff Dispatch", zh: "劳务派遣" },
+  dispatch: { ja: "労働者派遣", en: "Staff Dispatch", zh: "劳務派遣" },
   recruit: { ja: "リクルート", en: "Recruitment", zh: "招聘" },
   other: { ja: "その他", en: "Other", zh: "其他" },
 };
@@ -139,67 +138,6 @@ https://shinesoft.co.jp/
   return templates[locale] || templates.ja;
 }
 
-// Resend経由で送信（本番環境）
-async function sendViaResend(
-  body: ContactBody,
-  autoReply: { subject: string; text: string },
-  adminText: string
-) {
-  const resend = new Resend(process.env.RESEND_API_KEY);
-  const fromEmail = process.env.RESEND_FROM || "onboarding@resend.dev";
-  const fromName = "株式会社シャインソフト";
-
-  await resend.emails.send({
-    from: `${fromName} <${fromEmail}>`,
-    to: [process.env.CONTACT_TO_EMAIL!],
-    replyTo: `${body.name} <${body.email}>`,
-    subject: `【新規お問い合わせ】${getTypeLabel(body.type, body.locale)} - ${body.company}`,
-    text: adminText,
-  });
-
-  await resend.emails.send({
-    from: `${fromName} <${fromEmail}>`,
-    to: [body.email],
-    subject: autoReply.subject,
-    text: autoReply.text,
-  });
-}
-
-// nodemailer経由で送信（ローカル開発用）
-async function sendViaSmtp(
-  body: ContactBody,
-  autoReply: { subject: string; text: string },
-  adminText: string
-) {
-  const transporter = nodemailer.createTransport({
-    host: process.env.SMTP_HOST,
-    port: Number(process.env.SMTP_PORT) || 587,
-    secure: process.env.SMTP_SECURE === "true",
-    auth: {
-      user: process.env.SMTP_USER,
-      pass: process.env.SMTP_PASS,
-    },
-  });
-
-  const fromName = "株式会社シャインソフト";
-  const fromEmail = process.env.SMTP_FROM || process.env.SMTP_USER || "noreply@shinesoft.co.jp";
-
-  await transporter.sendMail({
-    from: `"${fromName}" <${fromEmail}>`,
-    to: process.env.CONTACT_TO_EMAIL,
-    replyTo: `"${body.name}" <${body.email}>`,
-    subject: `【新規お問い合わせ】${getTypeLabel(body.type, body.locale)} - ${body.company}`,
-    text: adminText,
-  });
-
-  await transporter.sendMail({
-    from: `"${fromName}" <${fromEmail}>`,
-    to: body.email,
-    subject: autoReply.subject,
-    text: autoReply.text,
-  });
-}
-
 export async function POST(req: NextRequest) {
   try {
     const body: ContactBody = await req.json();
@@ -216,18 +154,42 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "Invalid phone" }, { status: 400 });
     }
 
+    if (!process.env.SMTP_HOST || !process.env.CONTACT_TO_EMAIL) {
+      console.log("[Contact] Email not configured. Form data:", body);
+      return NextResponse.json({ ok: true });
+    }
+
+    const transporter = nodemailer.createTransport({
+      host: process.env.SMTP_HOST,
+      port: Number(process.env.SMTP_PORT) || 587,
+      secure: process.env.SMTP_SECURE === "true",
+      auth: {
+        user: process.env.SMTP_USER,
+        pass: process.env.SMTP_PASS,
+      },
+    });
+
     const autoReply = buildAutoReplyEmail(body);
     const adminText = buildAdminEmail(body);
+    const fromName = "株式会社シャインソフト";
+    const fromEmail = process.env.SMTP_FROM || process.env.SMTP_USER || "noreply@shinesoft.co.jp";
 
-    if (process.env.RESEND_API_KEY && process.env.CONTACT_TO_EMAIL) {
-      // 本番環境: Resend（HTTPS API）を使用
-      await sendViaResend(body, autoReply, adminText);
-    } else if (process.env.SMTP_HOST && process.env.CONTACT_TO_EMAIL) {
-      // ローカル開発: SMTP（nodemailer）を使用
-      await sendViaSmtp(body, autoReply, adminText);
-    } else {
-      console.log("[Contact] Email not configured. Form data:", body);
-    }
+    // 社内通知メール（Reply-Toに問い合わせユーザーのアドレスを設定）
+    await transporter.sendMail({
+      from: `"${fromName}" <${fromEmail}>`,
+      to: process.env.CONTACT_TO_EMAIL,
+      replyTo: `"${body.name}" <${body.email}>`,
+      subject: `【新規お問い合わせ】${getTypeLabel(body.type, body.locale)} - ${body.company}`,
+      text: adminText,
+    });
+
+    // 自動返信メール（送信者宛）
+    await transporter.sendMail({
+      from: `"${fromName}" <${fromEmail}>`,
+      to: body.email,
+      subject: autoReply.subject,
+      text: autoReply.text,
+    });
 
     return NextResponse.json({ ok: true });
   } catch (err) {
