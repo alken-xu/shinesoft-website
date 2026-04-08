@@ -235,18 +235,18 @@ export async function GET() {
   }
 
   // ポート疎通テスト（IPv4 / IPv6 / 自動 の3パターン）
-  const testCases: Array<{ label: string; opts: object }> = [
-    { label: "port_465_ipv4", opts: { host: "smtp.gmail.com", port: 465, family: 4 } },
-    { label: "port_587_ipv4", opts: { host: "smtp.gmail.com", port: 587, family: 4 } },
-    { label: "port_465_ipv6", opts: { host: "smtp.gmail.com", port: 465, family: 6 } },
-    { label: "port_587_ipv6", opts: { host: "smtp.gmail.com", port: 587, family: 6 } },
-    { label: "port_465_auto", opts: { host: "smtp.gmail.com", port: 465 } },
-    { label: "port_587_auto", opts: { host: "smtp.gmail.com", port: 587 } },
+  const { createConnection } = net as unknown as typeof import("net");
+  const testCases = [
+    { label: "port_465_ipv4", host: "smtp.gmail.com", port: 465, family: 4 as 4 },
+    { label: "port_587_ipv4", host: "smtp.gmail.com", port: 587, family: 4 as 4 },
+    { label: "port_465_ipv6", host: "smtp.gmail.com", port: 465, family: 6 as 6 },
+    { label: "port_587_ipv6", host: "smtp.gmail.com", port: 587, family: 6 as 6 },
+    { label: "port_465_auto", host: "smtp.gmail.com", port: 465, family: 0 as 0 },
+    { label: "port_587_auto", host: "smtp.gmail.com", port: 587, family: 0 as 0 },
   ];
-  for (const { label, opts } of testCases) {
+  for (const { label, host, port, family } of testCases) {
     await new Promise<void>((resolve) => {
-      const s = (net as { default?: typeof import("net"); createConnection?: typeof import("net")["createConnection"] }).default?.createConnection({ ...opts, timeout: 8000 })
-        ?? (net as unknown as typeof import("net")).createConnection({ ...opts, timeout: 8000 });
+      const s = createConnection({ host, port, family, timeout: 8000 });
       const timer = setTimeout(() => { s.destroy(); results[label] = "TIMEOUT(8s)"; resolve(); }, 8000);
       s.once("connect", () => { clearTimeout(timer); s.destroy(); results[label] = "OPEN"; resolve(); });
       s.once("error", (e: Error) => { clearTimeout(timer); results[label] = `ERR: ${e.message}`; resolve(); });
