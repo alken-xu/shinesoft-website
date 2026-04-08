@@ -166,8 +166,8 @@ export async function POST(req: NextRequest) {
     const [gmailIp] = await dns.resolve4("smtp.gmail.com");
     const transporter = nodemailer.createTransport({
       host: gmailIp,
-      port: 587,
-      secure: false, // STARTTLS
+      port: 465,
+      secure: true, // SSL/TLS
       tls: { servername: "smtp.gmail.com" }, // IPアドレス接続時もSNIでTLS検証
       auth: {
         user: process.env.SMTP_USER,
