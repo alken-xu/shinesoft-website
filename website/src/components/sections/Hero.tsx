@@ -101,7 +101,7 @@ export default function Hero({ locale, dict }: HeroProps) {
   }, []);
 
   return (
-    <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
+    <section className="relative min-h-screen flex items-center justify-center overflow-hidden pt-20">
       {/* Background gradient */}
       <div className="absolute inset-0 bg-gradient-to-br from-[#0f172a] via-[#0c1a3a] to-[#0f172a]" />
       <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,rgba(56,189,248,0.08),transparent_60%)]" />
@@ -112,7 +112,7 @@ export default function Hero({ locale, dict }: HeroProps) {
 
       {/* Content */}
       <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-        <h1 className="text-5xl sm:text-6xl lg:text-7xl xl:text-8xl font-black leading-tight mb-6">
+        <h1 className="text-5xl sm:text-6xl lg:text-6xl xl:text-7xl font-black leading-tight mb-6">
           <span className="block text-white">{t.catch1}</span>
           <span className="block gradient-text">{t.catch2}</span>
         </h1>
