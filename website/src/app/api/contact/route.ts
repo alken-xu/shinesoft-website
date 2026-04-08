@@ -1,5 +1,4 @@
 import { NextRequest, NextResponse } from "next/server";
-import nodemailer from "nodemailer";
 
 interface ContactBody {
   type: string;
@@ -138,6 +137,86 @@ https://shinesoft.co.jp/
   return templates[locale] || templates.ja;
 }
 
+// ─── Gmail REST API（HTTPS/443）でメール送信 ───────────────────────────────
+
+/** OAuth2 リフレッシュトークンからアクセストークンを取得 */
+async function getAccessToken(): Promise<string> {
+  const res = await fetch("https://oauth2.googleapis.com/token", {
+    method: "POST",
+    headers: { "Content-Type": "application/x-www-form-urlencoded" },
+    body: new URLSearchParams({
+      client_id: process.env.GMAIL_CLIENT_ID!,
+      client_secret: process.env.GMAIL_CLIENT_SECRET!,
+      refresh_token: process.env.GMAIL_REFRESH_TOKEN!,
+      grant_type: "refresh_token",
+    }),
+  });
+  if (!res.ok) {
+    throw new Error(`OAuth2 token error: ${await res.text()}`);
+  }
+  const data = (await res.json()) as { access_token: string };
+  return data.access_token;
+}
+
+/** 非ASCII文字列を RFC 2047 形式にエンコード */
+function encodeWord(str: string): string {
+  if (/^[\x20-\x7E]*$/.test(str)) return str;
+  return `=?UTF-8?B?${Buffer.from(str).toString("base64")}?=`;
+}
+
+/** RFC 2822 メッセージを base64url エンコードして返す */
+function buildRawEmail(options: {
+  from: string;
+  to: string;
+  replyTo?: string;
+  subject: string;
+  text: string;
+}): string {
+  const lines = [
+    `From: ${options.from}`,
+    `To: ${options.to}`,
+    ...(options.replyTo ? [`Reply-To: ${options.replyTo}`] : []),
+    `Subject: ${encodeWord(options.subject)}`,
+    "MIME-Version: 1.0",
+    "Content-Type: text/plain; charset=UTF-8",
+    "",
+    options.text,
+  ];
+  return Buffer.from(lines.join("\r\n"))
+    .toString("base64")
+    .replace(/\+/g, "-")
+    .replace(/\//g, "_")
+    .replace(/=+$/, "");
+}
+
+/** Gmail REST API 経由でメールを送信（HTTPS/443 を使用） */
+async function gmailSend(options: {
+  from: string;
+  to: string;
+  replyTo?: string;
+  subject: string;
+  text: string;
+}): Promise<void> {
+  const accessToken = await getAccessToken();
+  const raw = buildRawEmail(options);
+  const res = await fetch(
+    "https://gmail.googleapis.com/gmail/v1/users/me/messages/send",
+    {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ raw }),
+    }
+  );
+  if (!res.ok) {
+    throw new Error(`Gmail API error ${res.status}: ${await res.text()}`);
+  }
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+
 export async function POST(req: NextRequest) {
   try {
     const body: ContactBody = await req.json();
@@ -154,53 +233,35 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "Invalid phone" }, { status: 400 });
     }
 
-    if (!process.env.SMTP_USER || !process.env.CONTACT_TO_EMAIL) {
+    if (
+      !process.env.SMTP_USER ||
+      !process.env.CONTACT_TO_EMAIL ||
+      !process.env.GMAIL_CLIENT_ID ||
+      !process.env.GMAIL_CLIENT_SECRET ||
+      !process.env.GMAIL_REFRESH_TOKEN
+    ) {
       console.log("[Contact] Email not configured. Form data:", body);
       return NextResponse.json({ ok: true });
     }
 
-    // nodemailer 8.x は os.networkInterfaces() でIPv6インターフェースを検出すると
-    // IPv6アドレスも解決対象にし、ランダムに選択する。
-    // Render環境ではIPv6インターフェースが存在するがGmailへのIPv6接続が失敗するため、
-    // 共有モジュールのnetworkInterfacesからIPv6エントリを除去してIPv4のみに強制する。
-    const nmShared = (await import("nodemailer/lib/shared/index.js" as string)) as {
-      default?: { networkInterfaces?: Record<string, Array<{ family: string | number }>> };
-      networkInterfaces?: Record<string, Array<{ family: string | number }>>;
-    };
-    const sharedMod = nmShared.default ?? nmShared;
-    if (sharedMod.networkInterfaces) {
-      for (const key of Object.keys(sharedMod.networkInterfaces)) {
-        sharedMod.networkInterfaces[key] = sharedMod.networkInterfaces[key].filter(
-          (iface) => iface.family === "IPv4" || iface.family === 4
-        );
-      }
-    }
-
-    const transporter = nodemailer.createTransport({
-      service: "gmail",
-      auth: {
-        user: process.env.SMTP_USER,
-        pass: process.env.SMTP_PASS,
-      },
-    });
-
     const autoReply = buildAutoReplyEmail(body);
     const adminText = buildAdminEmail(body);
     const fromName = "株式会社シャインソフト";
-    const fromEmail = process.env.SMTP_FROM || process.env.SMTP_USER || "noreply@shinesoft.co.jp";
+    const fromEmail = process.env.SMTP_FROM || process.env.SMTP_USER;
+    const from = `${encodeWord(fromName)} <${fromEmail}>`;
 
-    // 社内通知メール（Reply-Toに問い合わせユーザーのアドレスを設定）
-    await transporter.sendMail({
-      from: `"${fromName}" <${fromEmail}>`,
+    // 社内通知メール（Reply-To に問い合わせユーザーのアドレスを設定）
+    await gmailSend({
+      from,
       to: process.env.CONTACT_TO_EMAIL,
-      replyTo: `"${body.name}" <${body.email}>`,
+      replyTo: `${encodeWord(body.name)} <${body.email}>`,
       subject: `【新規お問い合わせ】${getTypeLabel(body.type, body.locale)} - ${body.company}`,
       text: adminText,
     });
 
-    // 自動返信メール（送信者宛）
-    await transporter.sendMail({
-      from: `"${fromName}" <${fromEmail}>`,
+    // 自動返信メール（問い合わせユーザー宛）
+    await gmailSend({
+      from,
       to: body.email,
       subject: autoReply.subject,
       text: autoReply.text,
@@ -211,48 +272,4 @@ export async function POST(req: NextRequest) {
     console.error("[Contact API Error]", err);
     return NextResponse.json({ error: "Server error" }, { status: 500 });
   }
-}
-
-// SMTP疎通テスト用（Render環境デバッグ）: GET /api/contact
-export async function GET() {
-  const net = await import("net");
-  const dns = await import("dns/promises");
-
-  const results: Record<string, string> = {};
-
-  // DNS解決テスト
-  try {
-    const ipv4 = await dns.resolve4("smtp.gmail.com");
-    results["dns_resolve4"] = ipv4.join(", ");
-  } catch (e) {
-    results["dns_resolve4"] = `ERROR: ${(e as Error).message}`;
-  }
-  try {
-    const ipv6 = await dns.resolve6("smtp.gmail.com");
-    results["dns_resolve6"] = ipv6.join(", ");
-  } catch (e) {
-    results["dns_resolve6"] = `ERROR: ${(e as Error).message}`;
-  }
-
-  // ポート疎通テスト（IPv4 / IPv6 / 自動 の3パターン）
-  const { createConnection } = net as unknown as typeof import("net");
-  const testCases = [
-    { label: "port_465_ipv4", host: "smtp.gmail.com", port: 465, family: 4 as 4 },
-    { label: "port_587_ipv4", host: "smtp.gmail.com", port: 587, family: 4 as 4 },
-    { label: "port_465_ipv6", host: "smtp.gmail.com", port: 465, family: 6 as 6 },
-    { label: "port_587_ipv6", host: "smtp.gmail.com", port: 587, family: 6 as 6 },
-    { label: "port_465_auto", host: "smtp.gmail.com", port: 465, family: 0 as 0 },
-    { label: "port_587_auto", host: "smtp.gmail.com", port: 587, family: 0 as 0 },
-  ];
-  for (const { label, host, port, family } of testCases) {
-    await new Promise<void>((resolve) => {
-      const s = createConnection({ host, port, family, timeout: 8000 });
-      const timer = setTimeout(() => { s.destroy(); results[label] = "TIMEOUT(8s)"; resolve(); }, 8000);
-      s.once("connect", () => { clearTimeout(timer); s.destroy(); results[label] = "OPEN"; resolve(); });
-      s.once("error", (e: Error) => { clearTimeout(timer); results[label] = `ERR: ${e.message}`; resolve(); });
-      s.once("timeout", () => { s.destroy(); results[label] = "TIMEOUT"; resolve(); });
-    });
-  }
-
-  return NextResponse.json(results);
 }
