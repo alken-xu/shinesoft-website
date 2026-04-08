@@ -161,14 +161,20 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ ok: true });
     }
 
-    // Render環境ではIPv6アドレスに解決されてENETUNREACHになるため、
-    // dns.resolve4()でAレコード(IPv4)を明示的に取得して接続する
-    const [gmailIp] = await dns.resolve4("smtp.gmail.com");
+    // Render環境ではsmtp.gmail.comがIPv6に解決されENETUNREACHになるため、
+    // dns.resolve4()でIPv4アドレスを取得して接続する（失敗時はホスト名にフォールバック）
+    let smtpHost = "smtp.gmail.com";
+    try {
+      const [ip4] = await dns.resolve4("smtp.gmail.com");
+      if (ip4) smtpHost = ip4;
+    } catch {
+      // resolve4失敗時はホスト名のまま使用
+    }
     const transporter = nodemailer.createTransport({
-      host: gmailIp,
+      host: smtpHost,
       port: 465,
       secure: true, // SSL/TLS
-      tls: { servername: "smtp.gmail.com" }, // IPアドレス接続時もSNIでTLS検証
+      tls: { servername: "smtp.gmail.com" }, // IP接続時もSNIでTLS検証
       auth: {
         user: process.env.SMTP_USER,
         pass: process.env.SMTP_PASS,
