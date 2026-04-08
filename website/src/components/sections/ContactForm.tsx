@@ -71,7 +71,7 @@ export default function ContactForm({ locale, dict }: Props) {
     if (!form.company.trim()) errs.company = v.company;
     if (!form.name.trim()) errs.name = v.name;
     if (!form.email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email)) errs.email = v.email;
-    if (!form.phone || !/^0\d{9,10}$/.test(form.phone)) errs.phone = v.phone;
+    if (!form.phone || !/^0\d{1,4}-\d{1,4}-\d{3,4}$/.test(form.phone)) errs.phone = v.phone;
     if (!form.privacy) errs.privacy = v.privacy;
     return errs;
   };
@@ -197,9 +197,10 @@ export default function ContactForm({ locale, dict }: Props) {
         <input
           type="tel"
           value={form.phone}
-          onChange={(e) => setForm({ ...form, phone: e.target.value.replace(/\D/g, "") })}
+          onChange={(e) => setForm({ ...form, phone: e.target.value.replace(/[^\d-]/g, "") })}
+          placeholder="例：03-1234-5678"
           className={inputClass("phone")}
-          maxLength={11}
+          maxLength={13}
         />
         {errors.phone && <p className="text-red-400 text-xs mt-1">{errors.phone}</p>}
       </div>

@@ -78,7 +78,7 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "Invalid email" }, { status: 400 });
     }
 
-    if (!/^0\d{9,10}$/.test(body.phone)) {
+    if (!/^0\d{1,4}-\d{1,4}-\d{3,4}$/.test(body.phone)) {
       return NextResponse.json({ error: "Invalid phone" }, { status: 400 });
     }
 
