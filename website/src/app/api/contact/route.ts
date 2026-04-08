@@ -1,10 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
-import dns from "dns";
 import nodemailer from "nodemailer";
-
-// Render環境でsmtp.gmail.comがIPv6に解決されENETUNREACHになる問題の対策
-// モジュール読み込み時（リクエスト処理前）にIPv4優先を設定する
-dns.setDefaultResultOrder("ipv4first");
+import type SMTPTransport from "nodemailer/lib/smtp-transport";
 
 interface ContactBody {
   type: string;
@@ -164,16 +160,22 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ ok: true });
     }
 
-    // service:'gmail' を使用（nodemailer内蔵のGmail設定）
-    // instrumentation.ts の setDefaultResultOrder('ipv4first') により
-    // dns.lookup() がIPv4優先で解決されるため、ENETUNREACH は発生しない
+    // tls.family:4 でDNS解決をIPv4に強制する
+    // setDefaultResultOrder や NODE_OPTIONS が効かない環境でも
+    // dns.lookup({ family: 4 }) が直接呼ばれるため確実にIPv4で接続される
     const transporter = nodemailer.createTransport({
-      service: "gmail",
+      host: "smtp.gmail.com",
+      port: 465,
+      secure: true,
+      tls: {
+        servername: "smtp.gmail.com",
+        family: 4, // IPv4強制
+      },
       auth: {
         user: process.env.SMTP_USER,
         pass: process.env.SMTP_PASS,
       },
-    });
+    } as SMTPTransport.Options);
 
     const autoReply = buildAutoReplyEmail(body);
     const adminText = buildAdminEmail(body);
