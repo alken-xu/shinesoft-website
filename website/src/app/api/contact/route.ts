@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { promises as dns } from "dns";
 import nodemailer from "nodemailer";
 import type SMTPTransport from "nodemailer/lib/smtp-transport";
 
@@ -160,10 +161,14 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ ok: true });
     }
 
+    // Render環境ではIPv6アドレスに解決されてENETUNREACHになるため、
+    // dns.resolve4()でAレコード(IPv4)を明示的に取得して接続する
+    const [gmailIp] = await dns.resolve4("smtp.gmail.com");
     const transporter = nodemailer.createTransport({
-      host: "smtp.gmail.com",
+      host: gmailIp,
       port: 587,
       secure: false, // STARTTLS
+      tls: { servername: "smtp.gmail.com" }, // IPアドレス接続時もSNIでTLS検証
       auth: {
         user: process.env.SMTP_USER,
         pass: process.env.SMTP_PASS,
