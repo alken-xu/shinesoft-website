@@ -76,7 +76,7 @@
     "company": "Company Name",
     "name": "Full Name",
     "email": "Email Address",
-    "phone": "Phone Number (no hyphens)",
+    "phone": "Phone Number (with hyphens)",
     "remarks": "Additional Notes",
     "privacy": "I agree to the Privacy Policy",
     "submit": "Send",
@@ -88,7 +88,7 @@
       "company": "Please enter your company name",
       "name": "Please enter your name",
       "email": "Please enter a valid email address",
-      "phone": "Please enter your phone number (numbers only)",
+      "phone": "Please enter your phone number with hyphens (e.g. 03-1234-5678)",
       "privacy": "You must agree to the Privacy Policy"
     }
   },
