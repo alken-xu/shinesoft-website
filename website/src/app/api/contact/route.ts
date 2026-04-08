@@ -1,10 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
-import dns from "dns";
 import nodemailer from "nodemailer";
 import type SMTPTransport from "nodemailer/lib/smtp-transport";
-
-// IPv4を優先してDNS解決（RenderのIPv6非対応環境対策）
-dns.setDefaultResultOrder("ipv4first");
 
 interface ContactBody {
   type: string;
@@ -165,8 +161,9 @@ export async function POST(req: NextRequest) {
     }
 
     const transporter = nodemailer.createTransport({
-      service: "gmail",
-      family: 4,
+      host: "smtp.gmail.com",
+      port: 587,
+      secure: false, // STARTTLS
       auth: {
         user: process.env.SMTP_USER,
         pass: process.env.SMTP_PASS,
