@@ -90,7 +90,7 @@ export async function POST(req: NextRequest) {
     const transporter = createTransporter();
     const adminText = buildAdminEmail(body);
     const fromName = "株式会社シャインソフト";
-    const fromEmail = process.env.SMTP_FROM || process.env.SMTP_USER;
+    const fromEmail = process.env.SMTP_FROM;
     const from = `"${fromName}" <${fromEmail}>`;
 
     // 社内通知メール（Reply-To に問い合わせユーザーのアドレスを設定）
