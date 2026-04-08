@@ -1,7 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { promises as dns } from "dns";
 import nodemailer from "nodemailer";
-import type SMTPTransport from "nodemailer/lib/smtp-transport";
 
 interface ContactBody {
   type: string;
@@ -161,33 +159,16 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ ok: true });
     }
 
-    // DNS解決状況をログ出力（Render環境デバッグ用）
-    let smtpHost = "smtp.gmail.com";
-    try {
-      const addrs = await dns.resolve4("smtp.gmail.com");
-      console.log("[Contact] dns.resolve4 結果:", addrs);
-      if (addrs[0]) smtpHost = addrs[0];
-    } catch (dnsErr) {
-      console.log("[Contact] dns.resolve4 失敗:", (dnsErr as Error).message);
-    }
-    try {
-      const addrs6 = await dns.resolve6("smtp.gmail.com");
-      console.log("[Contact] dns.resolve6 結果:", addrs6);
-    } catch {
-      console.log("[Contact] dns.resolve6 失敗（IPv6なし）");
-    }
-    console.log("[Contact] 使用SMTPホスト:", smtpHost, "port:465");
-
+    // service:'gmail' を使用（nodemailer内蔵のGmail設定）
+    // instrumentation.ts の setDefaultResultOrder('ipv4first') により
+    // dns.lookup() がIPv4優先で解決されるため、ENETUNREACH は発生しない
     const transporter = nodemailer.createTransport({
-      host: smtpHost,
-      port: 465,
-      secure: true, // SSL/TLS
-      tls: { servername: "smtp.gmail.com" }, // IP接続時もSNIでTLS検証
+      service: "gmail",
       auth: {
         user: process.env.SMTP_USER,
         pass: process.env.SMTP_PASS,
       },
-    } as SMTPTransport.Options);
+    });
 
     const autoReply = buildAutoReplyEmail(body);
     const adminText = buildAdminEmail(body);
