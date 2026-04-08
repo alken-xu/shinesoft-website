@@ -234,14 +234,23 @@ export async function GET() {
     results["dns_resolve6"] = `ERROR: ${(e as Error).message}`;
   }
 
-  // ポート疎通テスト（family:4 でIPv4限定）
-  for (const port of [465, 587]) {
+  // ポート疎通テスト（IPv4 / IPv6 / 自動 の3パターン）
+  const testCases: Array<{ label: string; opts: object }> = [
+    { label: "port_465_ipv4", opts: { host: "smtp.gmail.com", port: 465, family: 4 } },
+    { label: "port_587_ipv4", opts: { host: "smtp.gmail.com", port: 587, family: 4 } },
+    { label: "port_465_ipv6", opts: { host: "smtp.gmail.com", port: 465, family: 6 } },
+    { label: "port_587_ipv6", opts: { host: "smtp.gmail.com", port: 587, family: 6 } },
+    { label: "port_465_auto", opts: { host: "smtp.gmail.com", port: 465 } },
+    { label: "port_587_auto", opts: { host: "smtp.gmail.com", port: 587 } },
+  ];
+  for (const { label, opts } of testCases) {
     await new Promise<void>((resolve) => {
-      const s = net.default.createConnection({ host: "smtp.gmail.com", port, family: 4, timeout: 8000 });
-      const timer = setTimeout(() => { s.destroy(); results[`port_${port}`] = "TIMEOUT(8s)"; resolve(); }, 8000);
-      s.once("connect", () => { clearTimeout(timer); s.destroy(); results[`port_${port}`] = "OPEN"; resolve(); });
-      s.once("error", (e) => { clearTimeout(timer); results[`port_${port}`] = `ERROR: ${e.message}`; resolve(); });
-      s.once("timeout", () => { s.destroy(); results[`port_${port}`] = "TIMEOUT"; resolve(); });
+      const s = (net as { default?: typeof import("net"); createConnection?: typeof import("net")["createConnection"] }).default?.createConnection({ ...opts, timeout: 8000 })
+        ?? (net as unknown as typeof import("net")).createConnection({ ...opts, timeout: 8000 });
+      const timer = setTimeout(() => { s.destroy(); results[label] = "TIMEOUT(8s)"; resolve(); }, 8000);
+      s.once("connect", () => { clearTimeout(timer); s.destroy(); results[label] = "OPEN"; resolve(); });
+      s.once("error", (e: Error) => { clearTimeout(timer); results[label] = `ERR: ${e.message}`; resolve(); });
+      s.once("timeout", () => { s.destroy(); results[label] = "TIMEOUT"; resolve(); });
     });
   }
 
