@@ -71,7 +71,7 @@ export default function ContactForm({ locale, dict }: Props) {
     if (!form.company.trim()) errs.company = v.company;
     if (!form.name.trim()) errs.name = v.name;
     if (!form.email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email)) errs.email = v.email;
-    if (!form.phone || !/^\d{10,11}$/.test(form.phone)) errs.phone = v.phone;
+    if (!form.phone || !/^0\d{9,10}$/.test(form.phone)) errs.phone = v.phone;
     if (!form.privacy) errs.privacy = v.privacy;
     return errs;
   };
