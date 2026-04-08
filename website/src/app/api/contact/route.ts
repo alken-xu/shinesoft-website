@@ -1,6 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
 import nodemailer from "nodemailer";
-import type SMTPTransport from "nodemailer/lib/smtp-transport";
 
 interface ContactBody {
   type: string;
@@ -160,22 +159,30 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ ok: true });
     }
 
-    // tls.family:4 でDNS解決をIPv4に強制する
-    // setDefaultResultOrder や NODE_OPTIONS が効かない環境でも
-    // dns.lookup({ family: 4 }) が直接呼ばれるため確実にIPv4で接続される
+    // nodemailer 8.x は os.networkInterfaces() でIPv6インターフェースを検出すると
+    // IPv6アドレスも解決対象にし、ランダムに選択する。
+    // Render環境ではIPv6インターフェースが存在するがGmailへのIPv6接続が失敗するため、
+    // 共有モジュールのnetworkInterfacesからIPv6エントリを除去してIPv4のみに強制する。
+    const nmShared = (await import("nodemailer/lib/shared/index.js" as string)) as {
+      default?: { networkInterfaces?: Record<string, Array<{ family: string | number }>> };
+      networkInterfaces?: Record<string, Array<{ family: string | number }>>;
+    };
+    const sharedMod = nmShared.default ?? nmShared;
+    if (sharedMod.networkInterfaces) {
+      for (const key of Object.keys(sharedMod.networkInterfaces)) {
+        sharedMod.networkInterfaces[key] = sharedMod.networkInterfaces[key].filter(
+          (iface) => iface.family === "IPv4" || iface.family === 4
+        );
+      }
+    }
+
     const transporter = nodemailer.createTransport({
-      host: "smtp.gmail.com",
-      port: 465,
-      secure: true,
-      tls: {
-        servername: "smtp.gmail.com",
-        family: 4, // IPv4強制
-      },
+      service: "gmail",
       auth: {
         user: process.env.SMTP_USER,
         pass: process.env.SMTP_PASS,
       },
-    } as SMTPTransport.Options);
+    });
 
     const autoReply = buildAutoReplyEmail(body);
     const adminText = buildAdminEmail(body);
