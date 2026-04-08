@@ -1,5 +1,10 @@
 import { NextRequest, NextResponse } from "next/server";
+import dns from "dns";
 import nodemailer from "nodemailer";
+
+// Render環境でsmtp.gmail.comがIPv6に解決されENETUNREACHになる問題の対策
+// モジュール読み込み時（リクエスト処理前）にIPv4優先を設定する
+dns.setDefaultResultOrder("ipv4first");
 
 interface ContactBody {
   type: string;
