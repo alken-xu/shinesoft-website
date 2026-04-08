@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import nodemailer from "nodemailer";
 
 interface ContactBody {
   type: string;
@@ -137,82 +138,18 @@ https://shinesoft.co.jp/
   return templates[locale] || templates.ja;
 }
 
-// ─── Gmail REST API（HTTPS/443）でメール送信 ───────────────────────────────
+// ─── nodemailer SMTP でメール送信 ────────────────────────────────────────────
 
-/** OAuth2 リフレッシュトークンからアクセストークンを取得 */
-async function getAccessToken(): Promise<string> {
-  const res = await fetch("https://oauth2.googleapis.com/token", {
-    method: "POST",
-    headers: { "Content-Type": "application/x-www-form-urlencoded" },
-    body: new URLSearchParams({
-      client_id: process.env.GMAIL_CLIENT_ID!,
-      client_secret: process.env.GMAIL_CLIENT_SECRET!,
-      refresh_token: process.env.GMAIL_REFRESH_TOKEN!,
-      grant_type: "refresh_token",
-    }),
+function createTransporter() {
+  return nodemailer.createTransport({
+    host: process.env.SMTP_HOST,
+    port: Number(process.env.SMTP_PORT) || 587,
+    secure: process.env.SMTP_SECURE === "true",
+    auth: {
+      user: process.env.SMTP_USER,
+      pass: process.env.SMTP_PASS,
+    },
   });
-  if (!res.ok) {
-    throw new Error(`OAuth2 token error: ${await res.text()}`);
-  }
-  const data = (await res.json()) as { access_token: string };
-  return data.access_token;
-}
-
-/** 非ASCII文字列を RFC 2047 形式にエンコード */
-function encodeWord(str: string): string {
-  if (/^[\x20-\x7E]*$/.test(str)) return str;
-  return `=?UTF-8?B?${Buffer.from(str).toString("base64")}?=`;
-}
-
-/** RFC 2822 メッセージを base64url エンコードして返す */
-function buildRawEmail(options: {
-  from: string;
-  to: string;
-  replyTo?: string;
-  subject: string;
-  text: string;
-}): string {
-  const lines = [
-    `From: ${options.from}`,
-    `To: ${options.to}`,
-    ...(options.replyTo ? [`Reply-To: ${options.replyTo}`] : []),
-    `Subject: ${encodeWord(options.subject)}`,
-    "MIME-Version: 1.0",
-    "Content-Type: text/plain; charset=UTF-8",
-    "",
-    options.text,
-  ];
-  return Buffer.from(lines.join("\r\n"))
-    .toString("base64")
-    .replace(/\+/g, "-")
-    .replace(/\//g, "_")
-    .replace(/=+$/, "");
-}
-
-/** Gmail REST API 経由でメールを送信（HTTPS/443 を使用） */
-async function gmailSend(options: {
-  from: string;
-  to: string;
-  replyTo?: string;
-  subject: string;
-  text: string;
-}): Promise<void> {
-  const accessToken = await getAccessToken();
-  const raw = buildRawEmail(options);
-  const res = await fetch(
-    "https://gmail.googleapis.com/gmail/v1/users/me/messages/send",
-    {
-      method: "POST",
-      headers: {
-        Authorization: `Bearer ${accessToken}`,
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ raw }),
-    }
-  );
-  if (!res.ok) {
-    throw new Error(`Gmail API error ${res.status}: ${await res.text()}`);
-  }
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -233,34 +170,29 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "Invalid phone" }, { status: 400 });
     }
 
-    if (
-      !process.env.SMTP_USER ||
-      !process.env.CONTACT_TO_EMAIL ||
-      !process.env.GMAIL_CLIENT_ID ||
-      !process.env.GMAIL_CLIENT_SECRET ||
-      !process.env.GMAIL_REFRESH_TOKEN
-    ) {
+    if (!process.env.SMTP_HOST || !process.env.SMTP_USER || !process.env.CONTACT_TO_EMAIL) {
       console.log("[Contact] Email not configured. Form data:", body);
       return NextResponse.json({ ok: true });
     }
 
+    const transporter = createTransporter();
     const autoReply = buildAutoReplyEmail(body);
     const adminText = buildAdminEmail(body);
     const fromName = "株式会社シャインソフト";
     const fromEmail = process.env.SMTP_FROM || process.env.SMTP_USER;
-    const from = `${encodeWord(fromName)} <${fromEmail}>`;
+    const from = `"${fromName}" <${fromEmail}>`;
 
     // 社内通知メール（Reply-To に問い合わせユーザーのアドレスを設定）
-    await gmailSend({
+    await transporter.sendMail({
       from,
       to: process.env.CONTACT_TO_EMAIL,
-      replyTo: `${encodeWord(body.name)} <${body.email}>`,
+      replyTo: `"${body.name}" <${body.email}>`,
       subject: `【新規お問い合わせ】${getTypeLabel(body.type, body.locale)} - ${body.company}`,
       text: adminText,
     });
 
     // 自動返信メール（問い合わせユーザー宛）
-    await gmailSend({
+    await transporter.sendMail({
       from,
       to: body.email,
       subject: autoReply.subject,
