@@ -161,15 +161,23 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ ok: true });
     }
 
-    // Render環境ではsmtp.gmail.comがIPv6に解決されENETUNREACHになるため、
-    // dns.resolve4()でIPv4アドレスを取得して接続する（失敗時はホスト名にフォールバック）
+    // DNS解決状況をログ出力（Render環境デバッグ用）
     let smtpHost = "smtp.gmail.com";
     try {
-      const [ip4] = await dns.resolve4("smtp.gmail.com");
-      if (ip4) smtpHost = ip4;
-    } catch {
-      // resolve4失敗時はホスト名のまま使用
+      const addrs = await dns.resolve4("smtp.gmail.com");
+      console.log("[Contact] dns.resolve4 結果:", addrs);
+      if (addrs[0]) smtpHost = addrs[0];
+    } catch (dnsErr) {
+      console.log("[Contact] dns.resolve4 失敗:", (dnsErr as Error).message);
     }
+    try {
+      const addrs6 = await dns.resolve6("smtp.gmail.com");
+      console.log("[Contact] dns.resolve6 結果:", addrs6);
+    } catch {
+      console.log("[Contact] dns.resolve6 失敗（IPv6なし）");
+    }
+    console.log("[Contact] 使用SMTPホスト:", smtpHost, "port:465");
+
     const transporter = nodemailer.createTransport({
       host: smtpHost,
       port: 465,
