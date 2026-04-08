@@ -212,3 +212,38 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "Server error" }, { status: 500 });
   }
 }
+
+// SMTP疎通テスト用（Render環境デバッグ）: GET /api/contact
+export async function GET() {
+  const net = await import("net");
+  const dns = await import("dns/promises");
+
+  const results: Record<string, string> = {};
+
+  // DNS解決テスト
+  try {
+    const ipv4 = await dns.resolve4("smtp.gmail.com");
+    results["dns_resolve4"] = ipv4.join(", ");
+  } catch (e) {
+    results["dns_resolve4"] = `ERROR: ${(e as Error).message}`;
+  }
+  try {
+    const ipv6 = await dns.resolve6("smtp.gmail.com");
+    results["dns_resolve6"] = ipv6.join(", ");
+  } catch (e) {
+    results["dns_resolve6"] = `ERROR: ${(e as Error).message}`;
+  }
+
+  // ポート疎通テスト（family:4 でIPv4限定）
+  for (const port of [465, 587]) {
+    await new Promise<void>((resolve) => {
+      const s = net.default.createConnection({ host: "smtp.gmail.com", port, family: 4, timeout: 8000 });
+      const timer = setTimeout(() => { s.destroy(); results[`port_${port}`] = "TIMEOUT(8s)"; resolve(); }, 8000);
+      s.once("connect", () => { clearTimeout(timer); s.destroy(); results[`port_${port}`] = "OPEN"; resolve(); });
+      s.once("error", (e) => { clearTimeout(timer); results[`port_${port}`] = `ERROR: ${e.message}`; resolve(); });
+      s.once("timeout", () => { s.destroy(); results[`port_${port}`] = "TIMEOUT"; resolve(); });
+    });
+  }
+
+  return NextResponse.json(results);
+}
