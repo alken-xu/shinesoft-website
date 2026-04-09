@@ -218,9 +218,11 @@ main .border-white\/10 { border-color: #e0e0e0; }
 main .hover\:text-white:hover,
 main .group:hover .group-hover\:text-white { color: #0f62fe !important; }
 
-/* CTAボタン: sky-500 → IBM Blue 60、文字色は白を維持 */
-main .bg-sky-500  { background-color: #0f62fe; color: #ffffff !important; }
-main .hover\:bg-sky-400:hover { background-color: #0353e9; }
+/* CTAボタン: sky-500 → IBM Blue 60、文字色は白を維持
+   複合セレクターで詳細度を (0,3,0) に上げ text-white の黒上書きに勝つ */
+main .bg-sky-500,
+main .bg-sky-500.text-white { background-color: #0f62fe !important; color: #ffffff !important; }
+main .hover\:bg-sky-400:hover { background-color: #0353e9 !important; }
 main .rounded-xl,
 main .rounded-2xl { border-radius: 0; } /* IBM Carbon: カード・コンテナは角丸ゼロ */
 
