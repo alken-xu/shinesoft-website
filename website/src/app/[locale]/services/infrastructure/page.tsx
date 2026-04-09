@@ -74,7 +74,7 @@ export default async function InfrastructurePage({ params }: { params: Promise<{
     <>
       <PageHero label={c.hero.label} title={c.hero.title} description={c.hero.desc} />
 
-      <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 pb-24 space-y-10">
+      <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 pt-6 lg:pt-8 pb-24 space-y-10">
         {c.services.map((svc, i) => {
           const Icon = svc.icon;
           return (

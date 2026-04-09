@@ -71,7 +71,7 @@ export default async function ResearchPage({ params }: { params: Promise<{ local
     <>
       <PageHero label={c.hero.label} title={c.hero.title} description={c.hero.desc} />
 
-      <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 pb-24 space-y-10">
+      <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 pt-6 lg:pt-8 pb-24 space-y-10">
         {/* OSS */}
         <AnimatedSection>
           <div className="glass-card rounded-2xl p-8 lg:p-10">

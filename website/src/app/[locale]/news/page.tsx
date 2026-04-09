@@ -25,7 +25,7 @@ export default async function NewsListPage({ params }: { params: Promise<{ local
     <>
       <PageHero label={l.label} title={l.title} description={l.desc} />
 
-      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 pb-24">
+      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 pt-6 lg:pt-8 pb-24">
         <div className="space-y-4">
           {posts.map((post, i) => (
             <AnimatedSection key={post.slug} delay={i * 60}>
