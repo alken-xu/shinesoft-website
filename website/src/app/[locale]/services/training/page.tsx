@@ -65,7 +65,7 @@ export default async function TrainingPage({ params }: { params: Promise<{ local
     <>
       <PageHero label={c.hero.label} title={c.hero.title} description={c.hero.desc} />
 
-      <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 pt-12 lg:pt-16 pb-24 space-y-10">
+      <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 pt-6 lg:pt-8 pb-24 space-y-10">
         <AnimatedSection>
           <p className="text-slate-300 text-lg leading-relaxed glass-card rounded-2xl p-8">{c.lead}</p>
         </AnimatedSection>

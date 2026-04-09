@@ -32,7 +32,7 @@ export default async function CorporatePage({ params }: { params: Promise<{ loca
     <>
       <PageHero label={c.hero.label} title={c.hero.title} description={c.hero.desc} />
 
-      <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 pt-12 lg:pt-16 pb-24 space-y-16">
+      <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 pt-6 lg:pt-8 pb-24 space-y-16">
         {/* Profile table */}
         <AnimatedSection>
           <h2 className="text-xl font-bold text-white mb-6 flex items-center gap-3">

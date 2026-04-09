@@ -35,7 +35,7 @@ export default async function FeaturePage({ params }: { params: Promise<{ locale
     <>
       <PageHero label={c.hero.label} title={c.hero.title} description={c.hero.desc} />
 
-      <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 pt-12 lg:pt-16 pb-24 space-y-16">
+      <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 pt-6 lg:pt-8 pb-24 space-y-16">
         {c.features.map((feature, i) => {
           const Icon = iconMap[feature.icon] ?? Cpu;
           return (
