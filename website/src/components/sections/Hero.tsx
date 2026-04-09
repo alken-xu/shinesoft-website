@@ -1,6 +1,3 @@
-"use client";
-
-import { useEffect, useRef } from "react";
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 
@@ -20,125 +17,112 @@ interface HeroProps {
 }
 
 export default function Hero({ locale, dict }: HeroProps) {
-  const canvasRef = useRef<HTMLCanvasElement>(null);
   const t = dict.home.hero;
 
-  useEffect(() => {
-    const canvas = canvasRef.current;
-    if (!canvas) return;
-    const ctx = canvas.getContext("2d");
-    if (!ctx) return;
-
-    let width = (canvas.width = window.innerWidth);
-    let height = (canvas.height = window.innerHeight);
-
-    const particles: {
-      x: number;
-      y: number;
-      vx: number;
-      vy: number;
-      size: number;
-      alpha: number;
-    }[] = [];
-
-    for (let i = 0; i < 80; i++) {
-      particles.push({
-        x: Math.random() * width,
-        y: Math.random() * height,
-        vx: (Math.random() - 0.5) * 0.4,
-        vy: (Math.random() - 0.5) * 0.4,
-        size: Math.random() * 2 + 0.5,
-        alpha: Math.random() * 0.5 + 0.1,
-      });
-    }
-
-    let animId: number;
-    const animate = () => {
-      ctx.clearRect(0, 0, width, height);
-      particles.forEach((p) => {
-        p.x += p.vx;
-        p.y += p.vy;
-        if (p.x < 0) p.x = width;
-        if (p.x > width) p.x = 0;
-        if (p.y < 0) p.y = height;
-        if (p.y > height) p.y = 0;
-
-        ctx.beginPath();
-        ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
-        ctx.fillStyle = `rgba(56, 189, 248, ${p.alpha})`;
-        ctx.fill();
-      });
-
-      // Draw connections
-      particles.forEach((a, i) => {
-        particles.slice(i + 1).forEach((b) => {
-          const dist = Math.hypot(a.x - b.x, a.y - b.y);
-          if (dist < 120) {
-            ctx.beginPath();
-            ctx.moveTo(a.x, a.y);
-            ctx.lineTo(b.x, b.y);
-            ctx.strokeStyle = `rgba(56, 189, 248, ${0.08 * (1 - dist / 120)})`;
-            ctx.lineWidth = 0.5;
-            ctx.stroke();
-          }
-        });
-      });
-
-      animId = requestAnimationFrame(animate);
-    };
-    animate();
-
-    const onResize = () => {
-      width = canvas.width = window.innerWidth;
-      height = canvas.height = window.innerHeight;
-    };
-    window.addEventListener("resize", onResize);
-
-    return () => {
-      cancelAnimationFrame(animId);
-      window.removeEventListener("resize", onResize);
-    };
-  }, []);
-
   return (
-    <section className="relative min-h-screen flex items-center justify-center overflow-hidden pt-20">
-      {/* Background gradient */}
-      <div className="absolute inset-0 bg-gradient-to-br from-[#0f172a] via-[#0c1a3a] to-[#0f172a]" />
-      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,rgba(56,189,248,0.08),transparent_60%)]" />
-      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_bottom_left,rgba(129,140,248,0.06),transparent_60%)]" />
+    /*
+     * Stripe-style hero:
+     * - Deep navy (#0A2540) base with purple/cyan gradient mesh
+     * - Center-aligned headline with gradient text accent
+     * - Pill CTA buttons with glow shadow
+     * - Stats band at bottom
+     */
+    <section className="relative overflow-hidden bg-[#0A2540] pt-24 pb-28 lg:pt-36 lg:pb-40">
+      {/* Gradient mesh background */}
+      <div className="absolute inset-0 pointer-events-none" aria-hidden="true">
+        <div
+          className="absolute -top-40 -left-40 w-[700px] h-[700px] rounded-full opacity-20"
+          style={{ background: "radial-gradient(circle, #635BFF 0%, transparent 70%)" }}
+        />
+        <div
+          className="absolute -bottom-40 -right-20 w-[600px] h-[600px] rounded-full opacity-15"
+          style={{ background: "radial-gradient(circle, #00D4FF 0%, transparent 70%)" }}
+        />
+        <div
+          className="absolute inset-0 opacity-10"
+          style={{
+            background:
+              "linear-gradient(135deg, rgba(99,91,255,0.3) 0%, transparent 50%, rgba(0,212,255,0.2) 100%)",
+          }}
+        />
+      </div>
 
-      {/* Particle canvas */}
-      <canvas ref={canvasRef} className="absolute inset-0 w-full h-full" />
+      <div className="relative max-w-[1200px] mx-auto px-4 sm:px-6 lg:px-8 text-center">
+        {/* Eyebrow badge */}
+        <div className="inline-flex items-center gap-2 bg-white/10 backdrop-blur-sm border border-white/20 rounded-full px-4 py-1.5 mb-8">
+          <div className="w-1.5 h-1.5 rounded-full bg-[#635BFF]" />
+          <span className="text-white/80 text-xs font-medium tracking-[0.8px] uppercase">
+            SHINESOFT CORPORATION
+          </span>
+        </div>
 
-      {/* Content */}
-      <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-        <h1 className="text-5xl sm:text-6xl lg:text-6xl xl:text-7xl font-black leading-tight mb-6">
-          <span className="block text-white">{t.catch1}</span>
-          <span className="block gradient-text">{t.catch2}</span>
+        {/* Headline */}
+        <h1
+          className="text-white font-bold leading-[1.12] mb-6 mx-auto max-w-4xl"
+          style={{ fontSize: "clamp(2.25rem, 5.5vw, 4rem)", fontWeight: 700 }}
+        >
+          <span className="block">{t.catch1}</span>
+          <span
+            className="block mt-1"
+            style={{
+              background: "linear-gradient(135deg, #635BFF 0%, #00D4FF 100%)",
+              WebkitBackgroundClip: "text",
+              WebkitTextFillColor: "transparent",
+              backgroundClip: "text",
+            }}
+          >
+            {t.catch2}
+          </span>
         </h1>
 
-        <p className="text-slate-400 text-lg sm:text-xl max-w-2xl mx-auto mb-10 leading-relaxed">
+        {/* Subtitle */}
+        <p
+          className="text-[#ADB5BD] mx-auto max-w-[600px] mb-10"
+          style={{ fontSize: "18px", lineHeight: 1.7 }}
+        >
           {t.sub}
         </p>
 
-        <div className="flex flex-col sm:flex-row gap-4 justify-center">
+        {/* CTA row */}
+        <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
           <Link
             href={`/${locale}/services/software`}
-            className="group inline-flex items-center gap-2 bg-sky-500 hover:bg-sky-400 text-white px-8 py-4 rounded-xl font-semibold text-base transition-all duration-200 hover:shadow-lg hover:shadow-sky-500/25"
+            className="inline-flex items-center gap-2 bg-[#635BFF] hover:bg-[#4F46E5] text-[#ffffff] px-7 py-3.5 rounded-full font-semibold text-sm transition-all duration-200 shadow-[rgba(99,91,255,0.5)_0px_8px_30px] hover:shadow-[rgba(99,91,255,0.65)_0px_10px_36px] hover:-translate-y-0.5"
           >
             {t.cta}
-            <ArrowRight size={18} className="group-hover:translate-x-1 transition-transform" />
+            <ArrowRight size={16} />
           </Link>
           <Link
             href={`/${locale}/contact`}
-            className="inline-flex items-center gap-2 glass-card text-slate-300 hover:text-white px-8 py-4 rounded-xl font-semibold text-base transition-all duration-200 hover:border-sky-500/30"
+            className="inline-flex items-center gap-2 bg-white/10 hover:bg-white/20 border border-white/25 text-[#ffffff] px-7 py-3.5 rounded-full font-semibold text-sm transition-all duration-200 backdrop-blur-sm hover:-translate-y-0.5"
           >
             {t.contact}
+            <ArrowRight size={16} />
           </Link>
         </div>
+
+        {/* Stats band */}
+        <div className="mt-20 grid grid-cols-2 sm:grid-cols-4 gap-8 max-w-2xl mx-auto border-t border-white/10 pt-10">
+          {[
+            { value: "2006", label: "設立年" },
+            { value: "103", label: "社員数" },
+            { value: "ISMS", label: "MSA-IS-338" },
+            { value: "KCSP", label: "Kubernetes認定" },
+          ].map((stat) => (
+            <div key={stat.value} className="text-center">
+              <div
+                className="text-[#ffffff] font-bold"
+                style={{ fontSize: "clamp(1.25rem, 2.5vw, 1.75rem)" }}
+              >
+                {stat.value}
+              </div>
+              <div className="text-[#8898AA] text-xs tracking-[0.8px] uppercase mt-1">
+                {stat.label}
+              </div>
+            </div>
+          ))}
+        </div>
       </div>
-
-
     </section>
   );
 }

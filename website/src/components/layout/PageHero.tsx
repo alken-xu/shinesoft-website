@@ -6,20 +6,39 @@ interface PageHeroProps {
 
 export default function PageHero({ label, title, description }: PageHeroProps) {
   return (
-    <section className="relative pt-32 pb-16 lg:pt-40 lg:pb-20 overflow-hidden">
-      <div className="absolute inset-0 bg-gradient-to-b from-sky-950/30 to-transparent" />
-      <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-sky-500/30 to-transparent" />
-      <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <section className="bg-[#0A2540] pt-24 pb-14 lg:pt-28 relative overflow-hidden">
+      <div
+        className="absolute top-0 right-0 w-[500px] h-[300px] pointer-events-none opacity-10"
+        style={{ background: "radial-gradient(ellipse, #635BFF 0%, transparent 70%)" }}
+        aria-hidden="true"
+      />
+      <div className="max-w-[1200px] mx-auto px-4 sm:px-6 lg:px-8 relative">
         {label && (
-          <span className="inline-block text-sky-400 text-xs font-semibold tracking-widest uppercase mb-3">
+          <p
+            className="text-xs font-semibold tracking-[1.2px] uppercase mb-3"
+            style={{
+              background: "linear-gradient(135deg, #635BFF, #00D4FF)",
+              WebkitBackgroundClip: "text",
+              WebkitTextFillColor: "transparent",
+              backgroundClip: "text",
+            }}
+          >
             {label}
-          </span>
+          </p>
         )}
-        <h1 className="text-4xl sm:text-5xl lg:text-6xl font-black text-white mb-4">
+        <h1
+          className="text-[#ffffff] font-bold leading-[1.17]"
+          style={{ fontSize: "clamp(1.75rem, 4vw, 3rem)", fontWeight: 700 }}
+        >
           {title}
         </h1>
         {description && (
-          <p className="text-slate-400 text-lg max-w-2xl leading-relaxed">{description}</p>
+          <p
+            className="text-[#ADB5BD] mt-4 max-w-2xl"
+            style={{ fontSize: "16px", lineHeight: 1.7 }}
+          >
+            {description}
+          </p>
         )}
       </div>
     </section>
