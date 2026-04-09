@@ -1,6 +1,6 @@
 # 株式会社シャインソフト ホームページ リニューアルプロジェクト
 
-**SHINESOFT CORPORATION** の公式サイト（https://shinesoft.co.jp/）全面リニューアルのソースコードリポジトリです。
+**SHINESOFT CORPORATION** の[公式サイト](https://shinesoft.co.jp/)全面リニューアルのソースコードリポジトリです。
 
 ---
 
