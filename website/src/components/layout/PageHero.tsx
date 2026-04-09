@@ -6,20 +6,25 @@ interface PageHeroProps {
 
 export default function PageHero({ label, title, description }: PageHeroProps) {
   return (
-    <section className="relative pt-32 pb-16 lg:pt-40 lg:pb-20 overflow-hidden">
-      <div className="absolute inset-0 bg-gradient-to-b from-sky-950/30 to-transparent" />
-      <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-sky-500/30 to-transparent" />
-      <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    /* HashiCorp page header: dark (#15181e) to match nav, generous padding */
+    <section className="bg-[#15181e] pt-24 pb-12 lg:pt-28 lg:pb-16">
+      <div className="max-w-[1200px] mx-auto px-6">
         {label && (
-          <span className="inline-block text-sky-400 text-xs font-semibold tracking-widest uppercase mb-3">
-            {label}
-          </span>
+          <p className="hc-label text-[#656a76] mb-4">{label}</p>
         )}
-        <h1 className="text-4xl sm:text-5xl lg:text-6xl font-black text-white mb-4">
+        <h1
+          className="text-[#efeff1] font-semibold leading-[1.19]"
+          style={{ fontSize: "clamp(1.75rem, 4vw, 3rem)" }}
+        >
           {title}
         </h1>
         {description && (
-          <p className="text-slate-400 text-lg max-w-2xl leading-relaxed">{description}</p>
+          <p
+            className="text-[#d5d7db] mt-4 max-w-2xl"
+            style={{ fontSize: "16px", lineHeight: 1.63 }}
+          >
+            {description}
+          </p>
         )}
       </div>
     </section>

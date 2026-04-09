@@ -91,7 +91,7 @@ export default async function SoftwarePage({ params }: { params: Promise<{ local
     <>
       <PageHero label={c.hero.label} title={c.hero.title} description={c.hero.desc} />
 
-      <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 pb-24 space-y-14">
+      <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 pt-12 lg:pt-16 pb-24 space-y-14">
         <AnimatedSection>
           <p className="text-slate-300 text-lg leading-relaxed glass-card rounded-2xl p-8">{c.lead}</p>
         </AnimatedSection>
