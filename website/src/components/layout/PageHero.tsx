@@ -6,20 +6,27 @@ interface PageHeroProps {
 
 export default function PageHero({ label, title, description }: PageHeroProps) {
   return (
-    <section className="relative pt-32 pb-16 lg:pt-40 lg:pb-20 overflow-hidden">
-      <div className="absolute inset-0 bg-gradient-to-b from-sky-950/30 to-transparent" />
-      <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-sky-500/30 to-transparent" />
-      <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    /* IBM Carbon page header: #f4f4f4 (Gray 10) bg, dark text, 48px top offset for masthead */
+    <section className="bg-[#f4f4f4] border-b border-[#e0e0e0] pt-20 pb-12 lg:pt-24 lg:pb-16">
+      <div className="max-w-[1584px] mx-auto px-4 sm:px-8 lg:px-16">
         {label && (
-          <span className="inline-block text-sky-400 text-xs font-semibold tracking-widest uppercase mb-3">
+          <p className="text-xs font-semibold text-[#0f62fe] tracking-[0.32px] uppercase mb-3">
             {label}
-          </span>
+          </p>
         )}
-        <h1 className="text-4xl sm:text-5xl lg:text-6xl font-black text-white mb-4">
+        <h1
+          className="text-[#161616] leading-[1.17]"
+          style={{ fontSize: "clamp(1.75rem, 4vw, 3rem)", fontWeight: 300 }}
+        >
           {title}
         </h1>
         {description && (
-          <p className="text-slate-400 text-lg max-w-2xl leading-relaxed">{description}</p>
+          <p
+            className="text-[#525252] mt-4 max-w-2xl"
+            style={{ fontSize: "16px", lineHeight: 1.5 }}
+          >
+            {description}
+          </p>
         )}
       </div>
     </section>

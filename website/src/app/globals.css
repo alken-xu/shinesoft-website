@@ -182,6 +182,48 @@ body {
   font-weight: 600;
 }
 
+/* ================================================================
+   IBM DESIGN: dark-theme Tailwind クラスのライト背景向け上書き
+   <main> スコープ限定 → Header/Footer のダークスタイルを保護
+   ================================================================ */
+
+/* テキスト色 */
+main .text-white  { color: #161616; }
+main .text-slate-100,
+main .text-slate-200 { color: #161616; }
+main .text-slate-300  { color: #393939; }
+main .text-slate-400  { color: #525252; }
+main .text-slate-500,
+main .text-slate-600  { color: #6f6f6f; }
+main .text-sky-400,
+main .text-sky-300    { color: #0043ce; } /* Blue 70: ライト背景でのコントラスト確保 */
+main .text-indigo-400,
+main .text-indigo-300 { color: #0043ce; }
+
+/* アイコンボックス内の白テキストは復元（グラデーション背景上） */
+main .bg-gradient-to-br .text-white { color: #ffffff !important; }
+
+/* タグ/バッジ背景 */
+main .bg-sky-500\/10   { background-color: #edf5ff; }
+main .bg-indigo-500\/10 { background-color: #edf5ff; }
+main .bg-sky-500\/20   { background-color: #d0e2ff; }
+main .bg-white\/5      { background-color: #f4f4f4; }
+main .bg-white\/2      { background-color: #f9f9f9; }
+
+/* ボーダー */
+main .border-white\/5  { border-color: #e0e0e0; }
+main .border-white\/10 { border-color: #e0e0e0; }
+
+/* ホバー: white → IBM Blue */
+main .hover\:text-white:hover,
+main .group:hover .group-hover\:text-white { color: #0f62fe !important; }
+
+/* CTAボタン: sky-500 → IBM Blue 60 */
+main .bg-sky-500  { background-color: #0f62fe; }
+main .hover\:bg-sky-400:hover { background-color: #0353e9; }
+main .rounded-xl,
+main .rounded-2xl { border-radius: 0; } /* IBM Carbon: カード・コンテナは角丸ゼロ */
+
 /* Legacy class aliases — keeps existing page.tsx working */
 .glass-card {
   background-color: var(--cds-layer-01);

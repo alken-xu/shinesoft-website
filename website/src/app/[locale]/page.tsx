@@ -245,12 +245,12 @@ export default async function HomePage({
           <AnimatedSection>
             <div className="max-w-[640px]">
               <h2
-                className="text-white mb-4 leading-[1.25]"
+                className="text-[#ffffff] mb-4 leading-[1.25]"
                 style={{ fontSize: "clamp(1.5rem, 3vw, 2.25rem)", fontWeight: 300 }}
               >
                 {t.recruit.title}
               </h2>
-              <p className="text-white/80 text-sm tracking-[0.16px] leading-[1.5] mb-8 max-w-[480px]">
+              <p className="text-[#ffffff]/80 text-sm tracking-[0.16px] leading-[1.5] mb-8 max-w-[480px]">
                 {t.recruit.body}
               </p>
               <Link

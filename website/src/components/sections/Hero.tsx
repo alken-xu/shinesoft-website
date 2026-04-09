@@ -100,12 +100,12 @@ export default function Hero({ locale, dict }: HeroProps) {
               ].map((stat) => (
                 <div key={stat.value} className="border-l-2 border-white/40 pl-4">
                   <div
-                    className="text-white leading-tight"
+                    className="text-[#ffffff] leading-tight"
                     style={{ fontSize: "2rem", fontWeight: 300 }}
                   >
                     {stat.value}
                   </div>
-                  <div className="text-white/70 text-xs tracking-[0.32px] uppercase mt-0.5">
+                  <div className="text-[#ffffff]/70 text-xs tracking-[0.32px] uppercase mt-0.5">
                     {stat.label}
                   </div>
                 </div>
