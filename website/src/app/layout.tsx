@@ -26,7 +26,7 @@ export default async function RootLayout({
           crossOrigin="anonymous"
         />
         <link
-          href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;600;700&display=swap"
+          href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@300;400;600&family=IBM+Plex+Sans+JP:wght@300;400;600&family=IBM+Plex+Mono:wght@400&display=swap"
           rel="stylesheet"
         />
         <link rel="alternate" hrefLang="ja" href="/ja" />
@@ -58,7 +58,7 @@ export default async function RootLayout({
           }}
         />
       </head>
-      <body className="min-h-full flex flex-col bg-[#0f172a] text-slate-100">
+      <body className="min-h-full flex flex-col bg-white text-[#161616]">
         {children}
       </body>
     </html>

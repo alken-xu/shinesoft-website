@@ -1,6 +1,3 @@
-"use client";
-
-import { useEffect, useRef } from "react";
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 
@@ -20,125 +17,103 @@ interface HeroProps {
 }
 
 export default function Hero({ locale, dict }: HeroProps) {
-  const canvasRef = useRef<HTMLCanvasElement>(null);
   const t = dict.home.hero;
 
-  useEffect(() => {
-    const canvas = canvasRef.current;
-    if (!canvas) return;
-    const ctx = canvas.getContext("2d");
-    if (!ctx) return;
-
-    let width = (canvas.width = window.innerWidth);
-    let height = (canvas.height = window.innerHeight);
-
-    const particles: {
-      x: number;
-      y: number;
-      vx: number;
-      vy: number;
-      size: number;
-      alpha: number;
-    }[] = [];
-
-    for (let i = 0; i < 80; i++) {
-      particles.push({
-        x: Math.random() * width,
-        y: Math.random() * height,
-        vx: (Math.random() - 0.5) * 0.4,
-        vy: (Math.random() - 0.5) * 0.4,
-        size: Math.random() * 2 + 0.5,
-        alpha: Math.random() * 0.5 + 0.1,
-      });
-    }
-
-    let animId: number;
-    const animate = () => {
-      ctx.clearRect(0, 0, width, height);
-      particles.forEach((p) => {
-        p.x += p.vx;
-        p.y += p.vy;
-        if (p.x < 0) p.x = width;
-        if (p.x > width) p.x = 0;
-        if (p.y < 0) p.y = height;
-        if (p.y > height) p.y = 0;
-
-        ctx.beginPath();
-        ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
-        ctx.fillStyle = `rgba(56, 189, 248, ${p.alpha})`;
-        ctx.fill();
-      });
-
-      // Draw connections
-      particles.forEach((a, i) => {
-        particles.slice(i + 1).forEach((b) => {
-          const dist = Math.hypot(a.x - b.x, a.y - b.y);
-          if (dist < 120) {
-            ctx.beginPath();
-            ctx.moveTo(a.x, a.y);
-            ctx.lineTo(b.x, b.y);
-            ctx.strokeStyle = `rgba(56, 189, 248, ${0.08 * (1 - dist / 120)})`;
-            ctx.lineWidth = 0.5;
-            ctx.stroke();
-          }
-        });
-      });
-
-      animId = requestAnimationFrame(animate);
-    };
-    animate();
-
-    const onResize = () => {
-      width = canvas.width = window.innerWidth;
-      height = canvas.height = window.innerHeight;
-    };
-    window.addEventListener("resize", onResize);
-
-    return () => {
-      cancelAnimationFrame(animId);
-      window.removeEventListener("resize", onResize);
-    };
-  }, []);
-
   return (
-    <section className="relative min-h-screen flex items-center justify-center overflow-hidden pt-20">
-      {/* Background gradient */}
-      <div className="absolute inset-0 bg-gradient-to-br from-[#0f172a] via-[#0c1a3a] to-[#0f172a]" />
-      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,rgba(56,189,248,0.08),transparent_60%)]" />
-      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_bottom_left,rgba(129,140,248,0.06),transparent_60%)]" />
+    /*
+     * IBM Carbon hero:
+     * - White (#ffffff) left half + IBM Blue 60 (#0f62fe) right accent band
+     * - Headline: 60px IBM Plex Sans weight 300, line-height 1.17
+     * - Rectangular buttons (0px radius), 48px height
+     */
+    <section className="relative pt-12 overflow-hidden">
+      {/* Blue accent band on the right (decorative) */}
+      <div
+        className="absolute top-0 right-0 h-full w-1/3 bg-[#0f62fe] hidden lg:block"
+        aria-hidden="true"
+      />
+      {/* Subtle grid lines — IBM blueprint feel */}
+      <div
+        className="absolute inset-0 opacity-[0.04] hidden lg:block"
+        aria-hidden="true"
+        style={{
+          backgroundImage:
+            "linear-gradient(#161616 1px, transparent 1px), linear-gradient(90deg, #161616 1px, transparent 1px)",
+          backgroundSize: "48px 48px",
+        }}
+      />
 
-      {/* Particle canvas */}
-      <canvas ref={canvasRef} className="absolute inset-0 w-full h-full" />
+      <div className="relative max-w-[1584px] mx-auto px-4 sm:px-8 lg:px-16">
+        <div className="grid grid-cols-1 lg:grid-cols-3 min-h-[calc(100vh-48px)]">
+          {/* Text column — spans 2/3 */}
+          <div className="lg:col-span-2 flex flex-col justify-center py-16 lg:py-24 lg:pr-16">
+            {/* Eyebrow label */}
+            <p className="text-xs font-semibold text-[#0f62fe] tracking-[0.32px] uppercase mb-6">
+              SHINESOFT CORPORATION
+            </p>
 
-      {/* Content */}
-      <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-        <h1 className="text-5xl sm:text-6xl lg:text-6xl xl:text-7xl font-black leading-tight mb-6">
-          <span className="block text-white">{t.catch1}</span>
-          <span className="block gradient-text">{t.catch2}</span>
-        </h1>
+            {/* Display headline — IBM Plex Sans Light 300, 60px */}
+            <h1
+              className="font-light text-[#161616] leading-[1.17] mb-6"
+              style={{ fontSize: "clamp(2rem, 5vw, 3.75rem)", fontWeight: 300 }}
+            >
+              <span className="block">{t.catch1}</span>
+              <span className="block text-[#0f62fe]">{t.catch2}</span>
+            </h1>
 
-        <p className="text-slate-400 text-lg sm:text-xl max-w-2xl mx-auto mb-10 leading-relaxed">
-          {t.sub}
-        </p>
+            {/* Subtitle — 16px regular, Gray 70 */}
+            <p
+              className="text-[#525252] mb-10 max-w-[560px]"
+              style={{ fontSize: "16px", lineHeight: 1.5 }}
+            >
+              {t.sub}
+            </p>
 
-        <div className="flex flex-col sm:flex-row gap-4 justify-center">
-          <Link
-            href={`/${locale}/services/software`}
-            className="group inline-flex items-center gap-2 bg-sky-500 hover:bg-sky-400 text-white px-8 py-4 rounded-xl font-semibold text-base transition-all duration-200 hover:shadow-lg hover:shadow-sky-500/25"
-          >
-            {t.cta}
-            <ArrowRight size={18} className="group-hover:translate-x-1 transition-transform" />
-          </Link>
-          <Link
-            href={`/${locale}/contact`}
-            className="inline-flex items-center gap-2 glass-card text-slate-300 hover:text-white px-8 py-4 rounded-xl font-semibold text-base transition-all duration-200 hover:border-sky-500/30"
-          >
-            {t.contact}
-          </Link>
+            {/* CTA row — IBM Carbon buttons, 0px radius, 48px height */}
+            <div className="flex flex-col sm:flex-row gap-0 sm:gap-px">
+              <Link
+                href={`/${locale}/services/software`}
+                className="inline-flex items-center justify-between gap-4 bg-[#0f62fe] hover:bg-[#0353e9] active:bg-[#002d9c] text-white px-4 h-12 text-sm tracking-[0.16px] transition-colors min-w-[200px]"
+              >
+                {t.cta}
+                <ArrowRight size={16} />
+              </Link>
+              <Link
+                href={`/${locale}/contact`}
+                className="inline-flex items-center justify-between gap-4 border border-[#0f62fe] text-[#0f62fe] hover:bg-[#edf5ff] px-4 h-12 text-sm tracking-[0.16px] transition-colors min-w-[200px]"
+              >
+                {t.contact}
+                <ArrowRight size={16} />
+              </Link>
+            </div>
+          </div>
+
+          {/* Right blue panel — decorative content */}
+          <div className="hidden lg:flex flex-col justify-center items-start pl-12 py-24 relative z-10">
+            {/* Stats floated on blue background */}
+            <div className="space-y-8">
+              {[
+                { value: "2006", label: "設立年" },
+                { value: "103", label: "社員数" },
+                { value: "ISMS", label: "MSA-IS-338" },
+                { value: "KCSP", label: "Kubernetes認定" },
+              ].map((stat) => (
+                <div key={stat.value} className="border-l-2 border-white/40 pl-4">
+                  <div
+                    className="text-white leading-tight"
+                    style={{ fontSize: "2rem", fontWeight: 300 }}
+                  >
+                    {stat.value}
+                  </div>
+                  <div className="text-white/70 text-xs tracking-[0.32px] uppercase mt-0.5">
+                    {stat.label}
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
         </div>
       </div>
-
-
     </section>
   );
 }
