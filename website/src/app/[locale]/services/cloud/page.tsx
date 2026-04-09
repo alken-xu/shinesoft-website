@@ -80,7 +80,7 @@ export default async function CloudPage({ params }: { params: Promise<{ locale: 
     <>
       <PageHero label={c.hero.label} title={c.hero.title} description={c.hero.desc} />
 
-      <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 pb-24 space-y-10">
+      <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 pt-12 lg:pt-16 pb-24 space-y-10">
         {c.services.map((svc, i) => {
           const Icon = svc.icon;
           return (

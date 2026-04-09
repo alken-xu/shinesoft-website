@@ -21,7 +21,7 @@ export default async function ContactPage({ params }: { params: Promise<{ locale
         title={t.title}
         description={t.subtitle}
       />
-      <div className="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8 pb-24">
+      <div className="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8 pt-12 lg:pt-16 pb-24">
         <ContactForm locale={locale as Locale} dict={t} />
       </div>
     </>

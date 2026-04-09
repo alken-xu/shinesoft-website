@@ -58,7 +58,7 @@ export default function Hero({ locale, dict }: HeroProps) {
 
         {/* Headline */}
         <h1
-          className="text-white font-bold leading-[1.12] mb-6 mx-auto max-w-4xl"
+          className="text-[#ffffff] font-bold leading-[1.12] mb-6 mx-auto max-w-4xl"
           style={{ fontSize: "clamp(2.25rem, 5.5vw, 4rem)", fontWeight: 700 }}
         >
           <span className="block">{t.catch1}</span>
