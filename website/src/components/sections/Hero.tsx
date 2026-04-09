@@ -1,6 +1,3 @@
-"use client";
-
-import { useEffect, useRef } from "react";
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 
@@ -20,125 +17,83 @@ interface HeroProps {
 }
 
 export default function Hero({ locale, dict }: HeroProps) {
-  const canvasRef = useRef<HTMLCanvasElement>(null);
   const t = dict.home.hero;
 
-  useEffect(() => {
-    const canvas = canvasRef.current;
-    if (!canvas) return;
-    const ctx = canvas.getContext("2d");
-    if (!ctx) return;
-
-    let width = (canvas.width = window.innerWidth);
-    let height = (canvas.height = window.innerHeight);
-
-    const particles: {
-      x: number;
-      y: number;
-      vx: number;
-      vy: number;
-      size: number;
-      alpha: number;
-    }[] = [];
-
-    for (let i = 0; i < 80; i++) {
-      particles.push({
-        x: Math.random() * width,
-        y: Math.random() * height,
-        vx: (Math.random() - 0.5) * 0.4,
-        vy: (Math.random() - 0.5) * 0.4,
-        size: Math.random() * 2 + 0.5,
-        alpha: Math.random() * 0.5 + 0.1,
-      });
-    }
-
-    let animId: number;
-    const animate = () => {
-      ctx.clearRect(0, 0, width, height);
-      particles.forEach((p) => {
-        p.x += p.vx;
-        p.y += p.vy;
-        if (p.x < 0) p.x = width;
-        if (p.x > width) p.x = 0;
-        if (p.y < 0) p.y = height;
-        if (p.y > height) p.y = 0;
-
-        ctx.beginPath();
-        ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
-        ctx.fillStyle = `rgba(56, 189, 248, ${p.alpha})`;
-        ctx.fill();
-      });
-
-      // Draw connections
-      particles.forEach((a, i) => {
-        particles.slice(i + 1).forEach((b) => {
-          const dist = Math.hypot(a.x - b.x, a.y - b.y);
-          if (dist < 120) {
-            ctx.beginPath();
-            ctx.moveTo(a.x, a.y);
-            ctx.lineTo(b.x, b.y);
-            ctx.strokeStyle = `rgba(56, 189, 248, ${0.08 * (1 - dist / 120)})`;
-            ctx.lineWidth = 0.5;
-            ctx.stroke();
-          }
-        });
-      });
-
-      animId = requestAnimationFrame(animate);
-    };
-    animate();
-
-    const onResize = () => {
-      width = canvas.width = window.innerWidth;
-      height = canvas.height = window.innerHeight;
-    };
-    window.addEventListener("resize", onResize);
-
-    return () => {
-      cancelAnimationFrame(animId);
-      window.removeEventListener("resize", onResize);
-    };
-  }, []);
-
   return (
-    <section className="relative min-h-screen flex items-center justify-center overflow-hidden pt-20">
-      {/* Background gradient */}
-      <div className="absolute inset-0 bg-gradient-to-br from-[#0f172a] via-[#0c1a3a] to-[#0f172a]" />
-      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,rgba(56,189,248,0.08),transparent_60%)]" />
-      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_bottom_left,rgba(129,140,248,0.06),transparent_60%)]" />
+    /*
+     * Notion-style hero:
+     * - Off-white (#F7F6F3) background — like a Notion page
+     * - Serif (Lora/Georgia) large heading, centered
+     * - Notion Blue CTA + ghost secondary
+     * - Minimal decoration: subtle divider line bottom
+     */
+    <section className="bg-[#F7F6F3] pt-28 pb-24 lg:pt-36 lg:pb-32 relative overflow-hidden">
+      {/* Very subtle top accent line */}
+      <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-[rgba(35,131,226,0.3)] to-transparent" aria-hidden="true" />
 
-      {/* Particle canvas */}
-      <canvas ref={canvasRef} className="absolute inset-0 w-full h-full" />
+      <div className="max-w-[860px] mx-auto px-4 sm:px-6 lg:px-8 text-center">
+        {/* Notion-style page icon */}
+        <div className="text-5xl mb-6 select-none" aria-hidden="true">💡</div>
 
-      {/* Content */}
-      <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-        <h1 className="text-5xl sm:text-6xl lg:text-6xl xl:text-7xl font-black leading-tight mb-6">
-          <span className="block text-white">{t.catch1}</span>
-          <span className="block gradient-text">{t.catch2}</span>
+        {/* Headline — serif display font */}
+        <h1
+          className="text-[#37352F] leading-[1.15] mb-5"
+          style={{
+            fontSize: "clamp(2rem, 5.5vw, 3.75rem)",
+            fontWeight: 700,
+            fontFamily: "Lora, Georgia, 'Times New Roman', serif",
+          }}
+        >
+          <span className="block">{t.catch1}</span>
+          <span className="block text-[#2383E2]">{t.catch2}</span>
         </h1>
 
-        <p className="text-slate-400 text-lg sm:text-xl max-w-2xl mx-auto mb-10 leading-relaxed">
+        {/* Subtitle */}
+        <p
+          className="text-[#787774] mx-auto max-w-[560px] mb-10"
+          style={{ fontSize: "17px", lineHeight: 1.75 }}
+        >
           {t.sub}
         </p>
 
-        <div className="flex flex-col sm:flex-row gap-4 justify-center">
+        {/* CTA row */}
+        <div className="flex flex-col sm:flex-row items-center justify-center gap-3">
           <Link
             href={`/${locale}/services/software`}
-            className="group inline-flex items-center gap-2 bg-sky-500 hover:bg-sky-400 text-white px-8 py-4 rounded-xl font-semibold text-base transition-all duration-200 hover:shadow-lg hover:shadow-sky-500/25"
+            className="inline-flex items-center gap-2 bg-[#2383E2] hover:bg-[#1A73D1] text-[#ffffff] px-6 py-2.5 rounded-md font-medium text-sm transition-colors"
           >
             {t.cta}
-            <ArrowRight size={18} className="group-hover:translate-x-1 transition-transform" />
+            <ArrowRight size={15} />
           </Link>
           <Link
             href={`/${locale}/contact`}
-            className="inline-flex items-center gap-2 glass-card text-slate-300 hover:text-white px-8 py-4 rounded-xl font-semibold text-base transition-all duration-200 hover:border-sky-500/30"
+            className="inline-flex items-center gap-2 bg-white hover:bg-[#F1F0ED] border border-[rgba(55,53,47,0.16)] text-[#37352F] px-6 py-2.5 rounded-md font-medium text-sm transition-colors"
           >
             {t.contact}
+            <ArrowRight size={15} />
           </Link>
+        </div>
+
+        {/* Stats — Notion table-like row */}
+        <div className="mt-16 grid grid-cols-2 sm:grid-cols-4 divide-x divide-[rgba(55,53,47,0.09)] border border-[rgba(55,53,47,0.09)] rounded-md overflow-hidden bg-white">
+          {[
+            { value: "2006", label: "設立年" },
+            { value: "103", label: "社員数" },
+            { value: "ISMS", label: "MSA-IS-338" },
+            { value: "KCSP", label: "Kubernetes認定" },
+          ].map((stat) => (
+            <div key={stat.value} className="py-5 px-4 text-center">
+              <div className="text-[#37352F] font-semibold text-lg" style={{ fontFamily: "Lora, Georgia, serif" }}>
+                {stat.value}
+              </div>
+              <div className="text-[#9B9A97] text-xs mt-0.5">{stat.label}</div>
+            </div>
+          ))}
         </div>
       </div>
 
-
+      {/* Bottom subtle divider */}
+      <div className="absolute bottom-0 left-0 right-0 h-px bg-[rgba(55,53,47,0.09)]" aria-hidden="true" />
     </section>
   );
 }

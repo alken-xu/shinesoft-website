@@ -48,7 +48,7 @@ export default async function NewsDetailPage({
         description={post.date.replace(/-/g, ".")}
       />
 
-      <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 pb-24">
+      <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 pt-6 lg:pt-8 pb-24">
         <AnimatedSection>
           <div className="glass-card rounded-2xl p-8 lg:p-12 mb-8">
             <div

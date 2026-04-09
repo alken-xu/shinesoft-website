@@ -6,20 +6,31 @@ interface PageHeroProps {
 
 export default function PageHero({ label, title, description }: PageHeroProps) {
   return (
-    <section className="relative pt-32 pb-16 lg:pt-40 lg:pb-20 overflow-hidden">
-      <div className="absolute inset-0 bg-gradient-to-b from-sky-950/30 to-transparent" />
-      <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-sky-500/30 to-transparent" />
-      <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    /* Notion page header: off-white bg, serif heading */
+    <section className="bg-[#F7F6F3] border-b border-[rgba(55,53,47,0.09)] pt-[72px] pb-10 lg:pt-20 lg:pb-12">
+      <div className="max-w-[1200px] mx-auto px-4 sm:px-6 lg:px-8">
         {label && (
-          <span className="inline-block text-sky-400 text-xs font-semibold tracking-widest uppercase mb-3">
+          <p className="text-[#9B9A97] text-xs font-medium tracking-widest uppercase mb-3">
             {label}
-          </span>
+          </p>
         )}
-        <h1 className="text-4xl sm:text-5xl lg:text-6xl font-black text-white mb-4">
+        <h1
+          className="text-[#37352F] leading-[1.2]"
+          style={{
+            fontSize: "clamp(1.75rem, 4vw, 2.75rem)",
+            fontWeight: 700,
+            fontFamily: "Lora, Georgia, 'Times New Roman', serif",
+          }}
+        >
           {title}
         </h1>
         {description && (
-          <p className="text-slate-400 text-lg max-w-2xl leading-relaxed">{description}</p>
+          <p
+            className="text-[#787774] mt-3 max-w-2xl"
+            style={{ fontSize: "16px", lineHeight: 1.7 }}
+          >
+            {description}
+          </p>
         )}
       </div>
     </section>

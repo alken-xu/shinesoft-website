@@ -177,7 +177,7 @@ export default async function PrivacyPage({ params }: { params: Promise<{ locale
   return (
     <>
       <PageHero title={c.hero.title} description={c.hero.desc} />
-      <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 pb-24">
+      <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 pt-6 lg:pt-8 pb-24">
         <AnimatedSection>
           <div className="glass-card rounded-2xl p-8 lg:p-12">
             <div dangerouslySetInnerHTML={{ __html: renderBody(c.body) }} />

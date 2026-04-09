@@ -1,12 +1,35 @@
 @import "tailwindcss";
 
+/* Notion Design System — CSS Custom Properties */
 :root {
-  --color-navy: #0f172a;
-  --color-navy-light: #1e293b;
-  --color-accent: #38bdf8;
-  --color-accent-gold: #f59e0b;
-  --color-text: #f8fafc;
-  --color-text-muted: #94a3b8;
+  /* Surfaces */
+  --no-bg: #FFFFFF;
+  --no-bg-default: #F7F6F3;
+  --no-bg-hover: rgba(55,53,47,0.06);
+  --no-bg-selected: rgba(35,131,226,0.08);
+  --no-bg-callout: #F1F0ED;
+
+  /* Text */
+  --no-text: #37352F;
+  --no-text-secondary: #787774;
+  --no-text-muted: #9B9A97;
+  --no-text-placeholder: #C1BEBB;
+  --no-text-on-dark: #FFFFFF;
+
+  /* Border */
+  --no-border: rgba(55,53,47,0.16);
+  --no-border-light: rgba(55,53,47,0.09);
+  --no-divider: #E9E9E7;
+
+  /* Accent — Notion Blue */
+  --no-blue: #2383E2;
+  --no-blue-hover: #1A73D1;
+  --no-blue-bg: rgba(35,131,226,0.08);
+  --no-blue-text: #2383E2;
+
+  /* Shadow */
+  --no-shadow-sm: rgba(15,15,15,0.05) 0px 0px 0px 1px, rgba(15,15,15,0.1) 0px 3px 6px, rgba(15,15,15,0.2) 0px 9px 24px;
+  --no-shadow-card: rgba(15,15,15,0.04) 0px 0px 0px 1px;
 }
 
 html {
@@ -14,9 +37,11 @@ html {
 }
 
 body {
-  background-color: var(--color-navy);
-  color: var(--color-text);
-  font-family: "Noto Sans JP", "Inter", system-ui, sans-serif;
+  background-color: var(--no-bg);
+  color: var(--no-text);
+  font-family: ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans JP", Helvetica, Arial, sans-serif;
+  font-size: 16px;
+  line-height: 1.6;
   -webkit-font-smoothing: antialiased;
 }
 
@@ -24,77 +49,138 @@ body {
   width: 6px;
 }
 ::-webkit-scrollbar-track {
-  background: var(--color-navy);
+  background: var(--no-bg-default);
 }
 ::-webkit-scrollbar-thumb {
-  background: var(--color-accent);
+  background: var(--no-border);
   border-radius: 3px;
 }
 
+/* Notion gradient text — brown to blue */
 .gradient-text {
-  background: linear-gradient(135deg, #38bdf8, #818cf8);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
+  color: var(--no-blue);
 }
 
+/* Notion card — white, subtle 1px shadow-border */
 .glass-card {
-  background: rgba(15, 23, 42, 0.96);
-  backdrop-filter: blur(12px);
-  border: 1px solid rgba(56, 189, 248, 0.15);
+  background: var(--no-bg);
+  border-radius: 6px;
+  box-shadow: var(--no-shadow-card);
+  border: 1px solid var(--no-divider);
 }
 
+/* Notion callout block */
+.notion-callout {
+  background: var(--no-bg-callout);
+  border-radius: 4px;
+  padding: 12px 16px;
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
+}
+
+/* Prose content */
 .prose-dark {
-  color: #cbd5e1;
+  color: var(--no-text-secondary);
   line-height: 1.8;
 }
 .prose-dark h1,
 .prose-dark h2,
 .prose-dark h3 {
-  color: #f8fafc;
+  color: var(--no-text);
+  font-weight: 700;
   margin-top: 1.5em;
   margin-bottom: 0.75em;
+  font-family: Georgia, "Times New Roman", serif;
 }
 .prose-dark h2 {
-  font-size: 1.5rem;
-  font-weight: 700;
-  border-left: 3px solid #38bdf8;
-  padding-left: 0.75rem;
+  font-size: 1.4rem;
+  border-bottom: 1px solid var(--no-divider);
+  padding-bottom: 0.4rem;
 }
 .prose-dark h3 {
-  font-size: 1.15rem;
+  font-size: 1.1rem;
   font-weight: 600;
 }
-.prose-dark p {
-  margin-bottom: 1em;
+.prose-dark p { margin-bottom: 1em; }
+.prose-dark ul, .prose-dark ol { padding-left: 1.5em; margin-bottom: 1em; }
+.prose-dark li { margin-bottom: 0.25em; }
+.prose-dark strong { color: var(--no-text); font-weight: 600; }
+.prose-dark a { color: var(--no-blue); text-decoration: underline; }
+.prose-dark a:hover { color: var(--no-blue-hover); }
+.prose-dark table { width: 100%; border-collapse: collapse; margin-bottom: 1em; }
+.prose-dark th, .prose-dark td { border: 1px solid var(--no-divider); padding: 0.5em 0.75em; font-size: 14px; }
+.prose-dark th { background: var(--no-bg-default); color: var(--no-text); font-weight: 600; }
+
+/* prose-ibm alias */
+.prose-ibm {
+  color: var(--no-text-secondary);
+  line-height: 1.8;
 }
-.prose-dark ul,
-.prose-dark ol {
-  padding-left: 1.5em;
-  margin-bottom: 1em;
+.prose-ibm h1,
+.prose-ibm h2,
+.prose-ibm h3 {
+  color: var(--no-text);
+  font-weight: 700;
+  margin-top: 1.5em;
+  margin-bottom: 0.75em;
+  font-family: Georgia, "Times New Roman", serif;
 }
-.prose-dark li {
-  margin-bottom: 0.25em;
+.prose-ibm h2 {
+  font-size: 1.4rem;
+  border-bottom: 1px solid var(--no-divider);
+  padding-bottom: 0.4rem;
 }
-.prose-dark strong {
-  color: #f8fafc;
-  font-weight: 600;
-}
-.prose-dark a {
-  color: #38bdf8;
-  text-decoration: underline;
-}
-.prose-dark table {
-  width: 100%;
-  border-collapse: collapse;
-  margin-bottom: 1em;
-}
-.prose-dark th,
-.prose-dark td {
-  border: 1px solid rgba(56, 189, 248, 0.2);
-  padding: 0.5em 0.75em;
-}
-.prose-dark th {
-  background: rgba(56, 189, 248, 0.1);
-  color: #f8fafc;
-}
+.prose-ibm h3 { font-size: 1.1rem; font-weight: 600; }
+.prose-ibm p { margin-bottom: 1em; }
+.prose-ibm ul, .prose-ibm ol { padding-left: 1.5em; margin-bottom: 1em; }
+.prose-ibm li { margin-bottom: 0.25em; }
+.prose-ibm strong { color: var(--no-text); font-weight: 600; }
+.prose-ibm a { color: var(--no-blue); text-decoration: underline; }
+.prose-ibm table { width: 100%; border-collapse: collapse; margin-bottom: 1em; }
+.prose-ibm th, .prose-ibm td { border: 1px solid var(--no-divider); padding: 0.5em 0.75em; font-size: 14px; }
+.prose-ibm th { background: var(--no-bg-default); color: var(--no-text); font-weight: 600; }
+
+/* ================================================================
+   main スコープ: dark-theme Tailwind クラスをライト背景向けに上書き
+   ================================================================ */
+
+main .text-white   { color: var(--no-text); }
+main .text-slate-100,
+main .text-slate-200 { color: var(--no-text); }
+main .text-slate-300  { color: var(--no-text-secondary); }
+main .text-slate-400  { color: var(--no-text-secondary); }
+main .text-slate-500,
+main .text-slate-600  { color: var(--no-text-muted); }
+main .text-sky-400,
+main .text-sky-300    { color: var(--no-blue); }
+main .text-indigo-400,
+main .text-indigo-300 { color: var(--no-blue); }
+
+/* アイコンボックス内（グラデーション背景）は白文字を保持 */
+main .bg-gradient-to-br .text-white { color: #ffffff !important; }
+
+/* タグ/バッジ */
+main .bg-sky-500\/10   { background-color: var(--no-blue-bg); }
+main .bg-indigo-500\/10 { background-color: var(--no-blue-bg); }
+main .bg-sky-500\/20   { background-color: rgba(35,131,226,0.15); }
+main .bg-white\/5      { background-color: var(--no-bg-callout); }
+main .bg-white\/2      { background-color: var(--no-bg-default); }
+
+/* ボーダー */
+main .border-white\/5  { border-color: var(--no-border-light); }
+main .border-white\/10 { border-color: var(--no-border); }
+
+/* ホバー */
+main .hover\:text-white:hover,
+main .group:hover .group-hover\:text-white { color: var(--no-blue) !important; }
+
+/* CTAボタン: bg-sky-500 → Notion Blue
+   複合セレクターで詳細度 (0,3,0) に上げ text-white の黒上書きに確実に勝つ */
+main .bg-sky-500,
+main .bg-sky-500.text-white { background-color: var(--no-blue) !important; color: #ffffff !important; }
+main .hover\:bg-sky-400:hover { background-color: var(--no-blue-hover) !important; }
+
+/* 角丸: Notion は小さめ 4-6px */
+main .rounded-xl  { border-radius: 6px; }
+main .rounded-2xl { border-radius: 8px; }

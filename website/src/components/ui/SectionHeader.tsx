@@ -12,17 +12,27 @@ export default function SectionHeader({
   className = "",
 }: SectionHeaderProps) {
   return (
-    <div className={`text-center mb-12 lg:mb-16 ${className}`}>
+    <div className={`mb-10 lg:mb-12 ${className}`}>
       {label && (
-        <span className="inline-block text-sky-400 text-xs font-semibold tracking-widest uppercase mb-3">
+        <p className="text-[#9B9A97] text-xs font-medium tracking-widest uppercase mb-2">
           {label}
-        </span>
+        </p>
       )}
-      <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-white mb-4">
+      <h2
+        className="text-[#37352F] leading-[1.22]"
+        style={{
+          fontSize: "clamp(1.4rem, 2.5vw, 2rem)",
+          fontWeight: 700,
+          fontFamily: "Lora, Georgia, 'Times New Roman', serif",
+        }}
+      >
         {title}
       </h2>
       {description && (
-        <p className="text-slate-400 text-lg max-w-2xl mx-auto leading-relaxed">
+        <p
+          className="text-[#787774] mt-3 max-w-2xl"
+          style={{ fontSize: "16px", lineHeight: 1.7 }}
+        >
           {description}
         </p>
       )}
