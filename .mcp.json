@@ -1,12 +1,29 @@
 {
   "mcpServers": {
     "playwright": {
+      "type": "stdio",
       "command": "cmd",
       "args": [
         "/c",
         "npx",
+        "--yes",
         "@playwright/mcp@latest"
-      ]
+      ],
+      "env": {}
+    },
+    "markitdown": {
+      "type": "stdio",
+      "command": "cmd",
+      "args": [
+        "/c",
+        "python",
+        "-u",
+        "-W",
+        "ignore",
+        "-m",
+        "markitdown_mcp"
+      ],
+      "env": {}
     }
   }
 }
